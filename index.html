@@ -147,6 +147,46 @@
     .pill-btn.selected-ok { border: 2px solid #1D9E75; background: #E1F5EE; color: #085041; font-weight: 500; }
     .pill-btn.selected-warning { border: 2px solid #BA7517; background: #FAEEDA; color: #633806; font-weight: 500; }
     .pill-btn.selected-danger { border: 2px solid #A32D2D; background: #F7C1C1; color: #501313; font-weight: 500; }
+    /* Champ saisie poids */
+    .weigh-input-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 8px;
+    }
+    .weigh-input-card label {
+      display: block;
+      font-size: 11px;
+      color: #5F5E5A;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .weigh-input-row { display: flex; gap: 8px; }
+    .weigh-input {
+      flex: 1;
+      padding: 10px;
+      border: 0.5px solid #D3D1C7;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      text-align: center;
+    }
+    .weigh-input:focus { outline: 2px solid #D85A30; border-color: transparent; }
+    .weigh-btn {
+      background: #D85A30; color: #fff; border: none;
+      padding: 10px 16px; border-radius: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      font-family: inherit;
+    }
+    .weigh-saved {
+      font-size: 11px;
+      color: #1D9E75;
+      margin-top: 6px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .weigh-saved.show { opacity: 1; }
     /* Stats grid */
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .stat-card {
@@ -627,6 +667,16 @@
       </div>
     </div>
 
+    <!-- Saisie poids du matin -->
+    <div class="weigh-input-card">
+      <label for="poids-input">⚖️ Poids du matin (kg)</label>
+      <div class="weigh-input-row">
+        <input type="number" id="poids-input" class="weigh-input" step="0.1" min="50" max="200" placeholder="—" inputmode="decimal">
+        <button class="weigh-btn" id="poids-save">Enregistrer</button>
+      </div>
+      <p class="weigh-saved" id="poids-saved">✓ Poids enregistré</p>
+    </div>
+
     <!-- Métriques poids -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -941,6 +991,7 @@
       setupRepasCheckboxes();
       setupToggles();
       setupReglagesActions();
+      setupPoidsInput(); // V1.1 — saisie poids
       // Modales (sous-étape 5.2)
       setupModalClose();
       setupSeanceRateeModal();
@@ -1781,6 +1832,37 @@
           if (id === 'notif-hebdo') STATE.notifications.hebdo = t.classList.contains('on');
           saveState();
         });
+      });
+    }
+
+    function setupPoidsInput() {
+      const input = document.getElementById('poids-input');
+      const btn = document.getElementById('poids-save');
+      const saved = document.getElementById('poids-saved');
+      // Pré-remplir si poids déjà saisi aujourd'hui
+      const today = todayISO();
+      if (STATE.poids[today]) {
+        input.value = STATE.poids[today];
+      }
+      btn.addEventListener('click', () => {
+        const val = parseFloat(input.value);
+        if (isNaN(val) || val < 50 || val > 200) {
+          alert('Saisis un poids valide entre 50 et 200 kg');
+          return;
+        }
+        STATE.poids[today] = Math.round(val * 10) / 10;
+        saveState();
+        // Animation de confirmation
+        saved.classList.add('show');
+        setTimeout(() => saved.classList.remove('show'), 2000);
+        // Re-render les métriques et le graphique
+        renderAujourdhui();
+        renderBilans();
+        checkRulesAndShowAlerts();
+      });
+      // Permet Entrée pour valider
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') btn.click();
       });
     }
 
