@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#D85A30">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Santé LS">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Programme Santé — Lorenzo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: #fafaf7;
+      color: #1a1a1a;
+      padding-bottom: 80px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    /* Header */
+    .app-header {
+      padding: 20px 16px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fafaf7;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .app-header h1 { font-size: 18px; font-weight: 600; color: #D85A30; margin: 0; }
+    .app-header .subtitle { font-size: 12px; color: #5F5E5A; margin: 0; }
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #FAECE7;
+      display: flex; align-items: center; justify-content: center;
+      color: #993C1D; font-weight: 600; font-size: 14px;
+    }
+    /* Screens */
+    .screen { display: none; padding: 0 16px; }
+    .screen.active { display: block; }
+    /* Cards */
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .card-accent-orange { border-left: 4px solid #D85A30; }
+    .card-accent-green { border-left: 4px solid #1D9E75; }
+    .card-accent-yellow { border-left: 4px solid #FAC775; }
+    .card-accent-purple { border-left: 4px solid #534AB7; }
+    .card-label {
+      font-size: 11px;
+      color: #5F5E5A;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .card-sub {
+      font-size: 12px;
+      color: #5F5E5A;
+    }
+    /* Boutons */
+    .btn-row { display: flex; gap: 6px; margin-top: 10px; }
+    .btn {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      font-family: inherit;
+    }
+    .btn:active { opacity: 0.7; }
+    .btn-success { background: #1D9E75; color: #fff; }
+    .btn-success.selected { background: #0F6E56; }
+    .btn-warning { background: #FAC775; color: #633806; }
+    .btn-warning.selected { background: #BA7517; color: #fff; }
+    .btn-danger { background: #F7C1C1; color: #791F1F; }
+    .btn-danger.selected { background: #A32D2D; color: #fff; }
+    .btn-primary {
+      background: #D85A30; color: #fff; width: 100%; padding: 12px;
+    }
+    .btn-outline {
+      background: #fff; border: 0.5px solid #D3D1C7; color: #1a1a1a;
+    }
+    /* Ressenti */
+    .ressenti-section { margin-bottom: 12px; }
+    .ressenti-label {
+      display: flex; justify-content: space-between;
+      margin-bottom: 4px; font-size: 12px;
+    }
+    .ressenti-value { font-weight: 500; color: #1D9E75; }
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 4px;
+      background: #F1EFE8;
+      border-radius: 4px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #D85A30;
+      cursor: pointer;
+    }
+    .emoji-row { display: flex; gap: 6px; margin-top: 6px; }
+    .emoji-btn {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 8px;
+      border: 0.5px solid #D3D1C7;
+      background: #fff;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .emoji-btn.selected {
+      border: 2px solid #D85A30;
+      background: #FAECE7;
+    }
+    .pill-row { display: flex; gap: 6px; margin-top: 6px; }
+    .pill-btn {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 8px;
+      border: 0.5px solid #D3D1C7;
+      background: #fff;
+      color: #5F5E5A;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .pill-btn.selected-ok { border: 2px solid #1D9E75; background: #E1F5EE; color: #085041; font-weight: 500; }
+    .pill-btn.selected-warning { border: 2px solid #BA7517; background: #FAEEDA; color: #633806; font-weight: 500; }
+    .pill-btn.selected-danger { border: 2px solid #A32D2D; background: #F7C1C1; color: #501313; font-weight: 500; }
+    /* Stats grid */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .stat-label { font-size: 11px; color: #5F5E5A; }
+    .stat-value { font-size: 22px; font-weight: 500; margin-top: 4px; }
+    .stat-unit { font-size: 12px; color: #5F5E5A; }
+    .stat-progress {
+      margin-top: 6px;
+      height: 5px;
+      background: #F1EFE8;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .stat-progress-bar {
+      height: 100%;
+      background: #D85A30;
+      transition: width 0.5s;
+    }
+    .stat-delta-positive { color: #1D9E75; font-size: 11px; margin-top: 2px; }
+    .stat-delta-negative { color: #A32D2D; font-size: 11px; margin-top: 2px; }
+    /* Repas list */
+    .repas-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0;
+      border-bottom: 0.5px solid #F1EFE8;
+    }
+    .repas-item:last-child { border-bottom: none; }
+    .repas-time { font-size: 11px; color: #5F5E5A; }
+    .repas-name { font-size: 13px; }
+    .repas-checkbox {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 1.5px solid #D3D1C7;
+      background: #fff;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: transparent;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .repas-checkbox.checked {
+      background: #1D9E75;
+      border-color: #1D9E75;
+      color: #fff;
+    }
+    /* Programme - jours */
+    .jour-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .jour-date { text-align: center; min-width: 36px; }
+    .jour-date-label { font-size: 10px; color: #5F5E5A; }
+    .jour-date-num { font-size: 16px; font-weight: 500; }
+    .jour-info { flex: 1; }
+    .jour-info-title { font-size: 13px; font-weight: 500; }
+    .jour-info-sub { font-size: 11px; color: #5F5E5A; margin-top: 2px; }
+    .jour-status { font-size: 20px; }
+    /* Aperçu 3 jours */
+    .preview-3days { display: flex; gap: 6px; margin-bottom: 12px; }
+    .preview-day {
+      flex: 1; background: #fff;
+      border-radius: 10px; padding: 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .preview-day-label { font-size: 10px; color: #5F5E5A; }
+    .preview-day-icon { font-size: 22px; margin: 4px 0; display: block; }
+    .preview-day-name { font-size: 11px; font-weight: 500; }
+    /* Tip box */
+    .tip-box {
+      background: #EAF3DE;
+      border-radius: 12px;
+      padding: 12px;
+      border-left: 4px solid #639922;
+      color: #27500A;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    .tip-box strong { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 500; }
+    /* Section title */
+    .section-title {
+      font-size: 11px;
+      color: #5F5E5A;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 16px 0 8px;
+    }
+    /* Programme details */
+    .programme-detail {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .programme-section { margin-bottom: 16px; }
+    .programme-section:last-child { margin-bottom: 0; }
+    .programme-section h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+    .exo-table {
+      width: 100%;
+      font-size: 12px;
+      border-collapse: collapse;
+    }
+    .exo-table th {
+      text-align: left;
+      font-weight: 500;
+      color: #5F5E5A;
+      padding: 6px 4px;
+      border-bottom: 0.5px solid #F1EFE8;
+      font-size: 11px;
+    }
+    .exo-table td {
+      padding: 8px 4px;
+      border-bottom: 0.5px solid #F1EFE8;
+    }
+    .exo-table td:first-child { font-weight: 500; }
+    /* Repas detail (recettes) */
+    .recipe-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .recipe-time {
+      font-size: 11px;
+      color: #D85A30;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .recipe-name {
+      font-size: 15px;
+      font-weight: 500;
+      margin: 4px 0 10px;
+    }
+    .recipe-section {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 0.5px solid #F1EFE8;
+    }
+    .recipe-section-title {
+      font-size: 11px;
+      color: #5F5E5A;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .recipe-info {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .berthou-ok {
+      background: #EAF3DE;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #27500A;
+      margin-top: 10px;
+    }
+    /* Bilans */
+    .chart-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .chart-header {
+      display: flex; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .chart-title { font-size: 13px; font-weight: 500; }
+    .chart-sub { font-size: 11px; color: #5F5E5A; }
+    /* Réglages */
+    .settings-section { background: #fff; border-radius: 12px; margin-bottom: 14px; }
+    .settings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 0.5px solid #F1EFE8;
+    }
+    .settings-item:last-child { border-bottom: none; }
+    .settings-item-name { font-size: 13px; }
+    .settings-item-sub { font-size: 11px; color: #5F5E5A; margin-top: 2px; }
+    .toggle {
+      width: 40px; height: 22px;
+      background: #D3D1C7;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle.on { background: #1D9E75; }
+    .toggle-knob {
+      width: 18px; height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+    }
+    .toggle.on .toggle-knob {
+      transform: translateX(18px);
+    }
+    /* Navigation bar */
+    nav.nav-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #ffffff;
+      border-top: 0.5px solid #D3D1C7;
+      padding: 8px 0 calc(env(safe-area-inset-bottom, 0) + 8px);
+      display: flex;
+      justify-content: space-around;
+      z-index: 100;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 4px;
+      color: #888780;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .nav-btn.active { color: #D85A30; }
+    .nav-icon { font-size: 22px; line-height: 1; }
+    .nav-label { font-size: 10px; }
+    .nav-btn.active .nav-label { font-weight: 500; }
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #5F5E5A;
+      font-size: 13px;
+    }
+    .empty-state .icon { font-size: 40px; display: block; margin-bottom: 12px; opacity: 0.5; }
+
+    /* ===== MODALES ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1000;
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.15s ease;
+    }
+    .modal-overlay.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      width: 100%;
+      max-width: 360px;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.2s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .modal-title { font-size: 16px; font-weight: 500; }
+    .modal-close {
+      background: none; border: none;
+      font-size: 22px; cursor: pointer;
+      color: #888780; line-height: 1;
+    }
+    .modal-sub { font-size: 12px; color: #5F5E5A; margin-bottom: 14px; }
+    .modal-section-label {
+      font-size: 12px; font-weight: 500;
+      margin: 12px 0 6px;
+    }
+    .cause-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .cause-pill {
+      background: #fff;
+      border: 0.5px solid #D3D1C7;
+      padding: 6px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .cause-pill.selected {
+      background: #FAECE7;
+      border: 1.5px solid #D85A30;
+      color: #993C1D;
+      font-weight: 500;
+    }
+    .modal-option {
+      background: #fff;
+      border: 0.5px solid #D3D1C7;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      margin-bottom: 6px;
+      font-family: inherit;
+    }
+    .modal-option.primary {
+      background: #E1F5EE;
+      border: 1.5px solid #1D9E75;
+    }
+    .modal-option.primary p:first-child { color: #085041; font-weight: 500; }
+    .modal-option p { margin: 0; font-size: 13px; }
+    .modal-option p + p { font-size: 11px; color: #5F5E5A; margin-top: 4px; }
+    .modal-info-box {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+    .modal-info-green { background: #EAF3DE; color: #27500A; border-left: 3px solid #639922; }
+    .modal-info-amber { background: #FAEEDA; color: #633806; border-left: 3px solid #BA7517; }
+    .modal-info-purple { background: #EEEDFE; color: #3C3489; border-left: 3px solid #534AB7; }
+    .alt-recette {
+      background: #fff;
+      border: 0.5px solid #D3D1C7;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+    .alt-recette-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .alt-recette-detail {
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 0.5px solid #F1EFE8;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #5F5E5A;
+    }
+    .alt-recette.open .alt-recette-detail { display: block; }
+    .alt-choose {
+      background: #D85A30; color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-top: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+    }
+    /* Choix perso */
+    .perso-input {
+      width: 100%;
+      padding: 10px;
+      border: 0.5px solid #D3D1C7;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 70px;
+      margin-bottom: 12px;
+    }
+    .perso-verdict {
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .perso-verdict.ok { background: #E1F5EE; color: #085041; border-left: 4px solid #1D9E75; }
+    .perso-verdict.warning { background: #FAEEDA; color: #633806; border-left: 4px solid #BA7517; }
+    .perso-verdict.bad { background: #F7C1C1; color: #501313; border-left: 4px solid #A32D2D; }
+    .perso-verdict strong { display: block; margin-bottom: 4px; }
+    /* Bouton ouvrir choix perso depuis écran Repas */
+    .perso-btn {
+      background: #534AB7;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+    /* Banner alerte règle auto */
+    .alert-banner {
+      background: #FAEEDA;
+      border-left: 4px solid #BA7517;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .alert-banner-title { font-size: 12px; font-weight: 500; color: #633806; margin-bottom: 4px; }
+    .alert-banner-text { font-size: 12px; color: #633806; }
+  </style>
+</head>
+<body>
+
+  <!-- Header dynamique -->
+  <header class="app-header">
+    <div>
+      <p class="subtitle" id="header-date">—</p>
+      <h1 id="header-greeting">Salut Lorenzo</h1>
+    </div>
+    <div class="avatar">LS</div>
+  </header>
+
+  <!-- ÉCRAN AUJOURD'HUI -->
+  <section class="screen active" id="screen-aujourdhui">
+
+    <!-- Zone d'alertes auto (s'affiche selon règles) -->
+    <div id="alerts-zone"></div>
+
+    <!-- Ressenti rapide -->
+    <div class="card">
+      <p class="card-label">Comment tu te sens ce matin ?</p>
+
+      <div class="ressenti-section">
+        <div class="ressenti-label">
+          <span>Énergie</span>
+          <span class="ressenti-value"><span id="energie-value">7</span>/10</span>
+        </div>
+        <input type="range" min="1" max="10" value="7" id="energie-slider">
+      </div>
+
+      <div class="ressenti-section">
+        <p style="font-size: 12px; margin-bottom: 6px;">Humeur</p>
+        <div class="emoji-row" id="humeur-row">
+          <button class="emoji-btn" data-humeur="1">😞</button>
+          <button class="emoji-btn" data-humeur="2">😐</button>
+          <button class="emoji-btn selected" data-humeur="3">🙂</button>
+          <button class="emoji-btn" data-humeur="4">😄</button>
+          <button class="emoji-btn" data-humeur="5">💪</button>
+        </div>
+      </div>
+
+      <div>
+        <p style="font-size: 12px; margin-bottom: 6px;">Genou droit</p>
+        <div class="pill-row" id="genou-row">
+          <button class="pill-btn selected-ok" data-genou="ok">OK</button>
+          <button class="pill-btn" data-genou="sensible">Sensible</button>
+          <button class="pill-btn" data-genou="douloureux">Douloureux</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activité du jour -->
+    <div class="card card-accent-orange" id="activite-card">
+      <p class="card-label">Activité du jour</p>
+      <p class="card-title" id="activite-title">—</p>
+      <p class="card-sub" id="activite-sub">—</p>
+      <div class="btn-row" id="activite-buttons">
+        <button class="btn btn-success" data-statut="fait">✓ Fait</button>
+        <button class="btn btn-warning" data-statut="partiel">Partiel</button>
+        <button class="btn btn-danger" data-statut="rate">Pas fait</button>
+      </div>
+    </div>
+
+    <!-- Métriques poids -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Poids matin</p>
+        <p class="stat-value"><span id="poids-actuel">—</span><span class="stat-unit"> kg</span></p>
+        <p class="stat-delta-positive" id="poids-delta">—</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Objectif</p>
+        <p class="stat-value">92<span class="stat-unit"> kg</span></p>
+        <div class="stat-progress"><div class="stat-progress-bar" id="poids-progress"></div></div>
+      </div>
+    </div>
+
+    <!-- Repas du jour -->
+    <div class="card">
+      <p class="card-label">Repas du jour</p>
+      <div id="repas-list"><!-- généré dynamiquement --></div>
+    </div>
+
+    <!-- Aperçu 3 prochains jours -->
+    <p class="section-title">3 prochains jours</p>
+    <div class="preview-3days" id="preview-3days"><!-- généré dynamiquement --></div>
+
+    <!-- Tip du jour -->
+    <div class="tip-box" id="tip-box" style="display:none;">
+      <strong>💡 Tip du jour</strong>
+      <span id="tip-text">—</span>
+    </div>
+  </section>
+
+  <!-- ÉCRAN PROGRAMME -->
+  <section class="screen" id="screen-programme">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 14px 0;">
+      <div>
+        <p style="font-size: 11px; color: #5F5E5A;">SEMAINE</p>
+        <p style="font-size: 18px; font-weight: 500;" id="semaine-titre">Semaine 1</p>
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <button class="btn btn-outline" style="width:34px; padding:8px;" id="semaine-prev">‹</button>
+        <button class="btn btn-outline" style="width:34px; padding:8px;" id="semaine-next">›</button>
+      </div>
+    </div>
+    <div id="jours-list"><!-- généré dynamiquement --></div>
+
+    <!-- Détail programme salle (caché par défaut, ouvert sur clic) -->
+    <div id="salle-detail" style="display:none; margin-top: 16px;"></div>
+  </section>
+
+  <!-- ÉCRAN REPAS -->
+  <section class="screen" id="screen-repas">
+    <h2 style="font-size: 18px; font-weight: 500; margin: 14px 0;">Repas & recettes</h2>
+    <div style="display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto;">
+      <button class="pill-btn selected-ok" style="border-radius: 16px; padding: 6px 12px;">Aujourd'hui</button>
+      <button class="pill-btn" style="border-radius: 16px; padding: 6px 12px;">Semaine</button>
+      <button class="pill-btn" style="border-radius: 16px; padding: 6px 12px;">Favoris</button>
+      <button class="pill-btn" style="border-radius: 16px; padding: 6px 12px;">Courses</button>
+    </div>
+    <button class="perso-btn" id="open-choix-perso">🍽 Évaluer mon repas perso</button>
+
+    <div id="repas-fiches"><!-- généré dynamiquement --></div>
+  </section>
+
+  <!-- ÉCRAN BILANS -->
+  <section class="screen" id="screen-bilans">
+    <h2 style="font-size: 18px; font-weight: 500; margin: 14px 0;">Bilans & progression</h2>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <p class="chart-title">Poids — Semaine 1</p>
+        <p class="chart-sub" id="poids-trend">—</p>
+      </div>
+      <svg viewBox="0 0 300 100" style="width: 100%; height: 100px;">
+        <polyline id="poids-line" points="" fill="none" stroke="#D85A30" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="0" y1="90" x2="300" y2="90" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="2,2"/>
+      </svg>
+      <p style="font-size: 10px; color: #5F5E5A; text-align: center; margin-top: 4px;" id="poids-axis">J0 → Aujourd'hui</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Énergie moy.</p>
+        <p class="stat-value" style="color:#1D9E75;"><span id="energie-moy">—</span><span class="stat-unit">/10</span></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Adhérence séances</p>
+        <p class="stat-value" style="color:#1D9E75;"><span id="adherence">—</span><span class="stat-unit">%</span></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Bilan semaine 1</p>
+      <div id="bilan-semaine-content"><!-- généré dynamiquement --></div>
+    </div>
+  </section>
+
+  <!-- ÉCRAN RÉGLAGES -->
+  <section class="screen" id="screen-reglages">
+    <h2 style="font-size: 18px; font-weight: 500; margin: 14px 0;">Réglages</h2>
+
+    <p class="section-title">Notifications</p>
+    <div class="settings-section">
+      <div class="settings-item">
+        <div>
+          <p class="settings-item-name">Séance du jour</p>
+          <p class="settings-item-sub">7h le matin</p>
+        </div>
+        <div class="toggle on" data-toggle="notif-seance"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="settings-item">
+        <div>
+          <p class="settings-item-name">Poids du matin</p>
+          <p class="settings-item-sub">8h</p>
+        </div>
+        <div class="toggle on" data-toggle="notif-poids"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="settings-item">
+        <div>
+          <p class="settings-item-name">Bilan du soir</p>
+          <p class="settings-item-sub">21h</p>
+        </div>
+        <div class="toggle on" data-toggle="notif-soir"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="settings-item">
+        <div>
+          <p class="settings-item-name">Bilan hebdo dimanche</p>
+          <p class="settings-item-sub">17h</p>
+        </div>
+        <div class="toggle on" data-toggle="notif-hebdo"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+
+    <p class="section-title">Données</p>
+    <div class="settings-section">
+      <div class="settings-item" id="btn-export">
+        <div><p class="settings-item-name">☁️ Exporter vers OneDrive</p></div>
+        <span style="color:#B4B2A9;">›</span>
+      </div>
+      <div class="settings-item" id="btn-import">
+        <div><p class="settings-item-name">🔄 Importer programme Notion</p></div>
+        <span style="color:#B4B2A9;">›</span>
+      </div>
+      <div class="settings-item" id="btn-reset">
+        <div><p class="settings-item-name" style="color:#A32D2D;">🗑 Réinitialiser les données</p></div>
+        <span style="color:#B4B2A9;">›</span>
+      </div>
+    </div>
+
+    <p class="section-title">Profil</p>
+    <div class="settings-section">
+      <div class="settings-item">
+        <p class="settings-item-name">Objectif poids</p>
+        <p class="settings-item-sub">92 kg</p>
+      </div>
+      <div class="settings-item">
+        <p class="settings-item-name">Limitations</p>
+        <p class="settings-item-sub">Genou D.</p>
+      </div>
+      <div class="settings-item">
+        <p class="settings-item-name" style="color:#5F5E5A;">Famille (V2)</p>
+        <p class="settings-item-sub" style="background:#F1EFE8; padding:2px 8px; border-radius:8px; font-size:10px;">Bientôt</p>
+      </div>
+    </div>
+
+    <p style="text-align:center; font-size: 11px; color:#888780; margin-top: 20px;">Version 1.0 — Données 100% locales sur cet appareil</p>
+  </section>
+
+  <!-- ===== MODALES ===== -->
+
+  <!-- Modale séance ratée -->
+  <div class="modal-overlay" id="modal-seance-ratee">
+    <div class="modal">
+      <div class="modal-header">
+        <p class="modal-title">Séance manquée</p>
+        <button class="modal-close" data-close="modal-seance-ratee">✕</button>
+      </div>
+      <p class="modal-sub" id="seance-ratee-sub">—</p>
+
+      <p class="modal-section-label">Pourquoi ?</p>
+      <div class="cause-pills" id="seance-cause-pills">
+        <button class="cause-pill" data-cause="fatigue">Fatigue</button>
+        <button class="cause-pill" data-cause="temps">Pas le temps</button>
+        <button class="cause-pill" data-cause="imprevu">Imprévu</button>
+        <button class="cause-pill" data-cause="genou">Genou</button>
+        <button class="cause-pill" data-cause="autre">Autre</button>
+      </div>
+
+      <p class="modal-section-label">Reporter ou annuler ?</p>
+      <div id="seance-options">
+        <button class="modal-option primary" data-action="report-suggest">
+          <p>Reporter à <span id="report-suggest-day">—</span></p>
+          <p>Premier jour libre · même séance</p>
+        </button>
+        <button class="modal-option" data-action="report-choose">
+          <p>Choisir un autre jour</p>
+        </button>
+        <button class="modal-option" data-action="annuler">
+          <p>Annuler la séance</p>
+        </button>
+      </div>
+
+      <div class="modal-info-box modal-info-green">
+        💡 Si tu annules : pas de surcharge sport, repas du soir allégé en féculents (-1/3). Option D appliquée.
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale repas raté -->
+  <div class="modal-overlay" id="modal-repas-rate">
+    <div class="modal">
+      <div class="modal-header">
+        <p class="modal-title">Repas non fait</p>
+        <button class="modal-close" data-close="modal-repas-rate">✕</button>
+      </div>
+      <p class="modal-sub" id="repas-rate-sub">—</p>
+
+      <p class="modal-section-label">La nourriture est-elle encore disponible ?</p>
+      <button class="modal-option primary" data-action="repas-reporter">
+        <p>✓ Oui — reporter à demain</p>
+        <p>Le repas devient celui de demain. Repas suivant décalé.</p>
+      </button>
+      <button class="modal-option" data-action="repas-annuler">
+        <p>✕ Non — annuler</p>
+        <p>L'app propose 2-3 alternatives rapides avec ce que tu as.</p>
+      </button>
+
+      <div id="alt-recettes-zone" style="display:none; margin-top:12px;">
+        <p class="modal-section-label">Alternatives suggérées</p>
+        <div id="alt-recettes-list"></div>
+        <p style="font-size:10px; color:#5F5E5A; text-align:center; margin-top:8px;">
+          Toutes respectent la règle Berthou (1/3 protéine, 1/3 légume, 1/3 féculent)
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale choix perso -->
+  <div class="modal-overlay" id="modal-choix-perso">
+    <div class="modal">
+      <div class="modal-header">
+        <p class="modal-title">🍽 Évaluer mon repas</p>
+        <button class="modal-close" data-close="modal-choix-perso">✕</button>
+      </div>
+      <p class="modal-sub">Décris ton repas (ce que tu vas manger). L'app te dit si c'est bon, à adapter, ou pas top.</p>
+
+      <textarea class="perso-input" id="perso-input"
+        placeholder="Ex : pâtes carbonara + 2 tranches pain · ou : salade poulet roquette tomate avec un peu de quinoa"></textarea>
+
+      <button class="perso-btn" id="perso-evaluate">Évaluer</button>
+
+      <div id="perso-verdict-zone"></div>
+    </div>
+  </div>
+
+  <!-- Navigation bottom -->
+  <nav class="nav-bar">
+    <button class="nav-btn active" data-screen="aujourdhui">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Aujourd'hui</span>
+    </button>
+    <button class="nav-btn" data-screen="programme">
+      <span class="nav-icon">📅</span>
+      <span class="nav-label">Programme</span>
+    </button>
+    <button class="nav-btn" data-screen="repas">
+      <span class="nav-icon">🍽</span>
+      <span class="nav-label">Repas</span>
+    </button>
+    <button class="nav-btn" data-screen="bilans">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Bilans</span>
+    </button>
+    <button class="nav-btn" data-screen="reglages">
+      <span class="nav-icon">⚙️</span>
+      <span class="nav-label">Réglages</span>
+    </button>
+  </nav>
+
+  <script>
+    // ============================================================
+    // PROGRAMME SANTÉ — Lorenzo · App PWA V1
+    // ============================================================
+
+    const STORAGE_KEY = 'lorenzo_sante_v1';
+    let DATA = null;   // données du programme (JSON migré)
+    let STATE = null;  // état utilisateur persistant
+
+    // ============== INITIALISATION ==============
+    async function init() {
+      // Charger les données du programme
+      try {
+        const r = await fetch('programme-data.json');
+        DATA = await r.json();
+      } catch (e) {
+        console.error('Impossible de charger programme-data.json', e);
+        DATA = { semaine: { jours: [] }, profil: {} };
+      }
+
+      // Charger l'état utilisateur depuis localStorage
+      STATE = loadState();
+
+      // Initialiser l'écran Aujourd'hui
+      renderAujourdhui();
+      renderProgramme();
+      renderRepas();
+      renderBilans();
+
+      // Activer la navigation
+      setupNavigation();
+      setupRessenti();
+      setupActivite();
+      setupRepasCheckboxes();
+      setupToggles();
+      setupReglagesActions();
+      // Modales (sous-étape 5.2)
+      setupModalClose();
+      setupSeanceRateeModal();
+      setupRepasRateModal();
+      setupChoixPerso();
+      // Règles d'adaptation auto
+      checkRulesAndShowAlerts();
+
+      // Header
+      updateHeader();
+    }
+
+    // ============== ÉTAT UTILISATEUR (localStorage) ==============
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try { return JSON.parse(raw); }
+        catch (e) { console.error('Erreur parse state', e); }
+      }
+      return {
+        poids: {},          // { "2026-05-17": 104.6 }
+        ressenti: {},       // { "2026-05-17": { energie:7, humeur:3, genou:'ok' } }
+        seances: {},        // { "2026-05-17": "fait" | "partiel" | "rate" }
+        repas: {},          // { "2026-05-17_dejeuner": true }
+        notifications: { seance: true, poids: true, soir: true, hebdo: true }
+      };
+    }
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+    }
+
+    // ============== UTILITAIRES ==============
+    function todayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    function getJourByDate(date) {
+      return DATA.semaine.jours.find(j => j.date === date);
+    }
+    function getCurrentJourIndex() {
+      const today = todayISO();
+      const idx = DATA.semaine.jours.findIndex(j => j.date === today);
+      // Si pas dans la semaine, on prend le premier jour comme démo
+      return idx >= 0 ? idx : 0;
+    }
+    function jourCourant() {
+      return DATA.semaine.jours[getCurrentJourIndex()] || DATA.semaine.jours[0];
+    }
+    function formatDateFR(iso) {
+      const d = new Date(iso + 'T00:00:00');
+      const jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+      const mois = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+      return `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]}`;
+    }
+
+    // ============== HEADER ==============
+    function updateHeader() {
+      const today = todayISO();
+      document.getElementById('header-date').textContent = formatDateFR(today);
+      document.getElementById('header-greeting').textContent = `Salut ${DATA.profil.prenom || 'Lorenzo'}`;
+    }
+
+    // ============== ÉCRAN AUJOURD'HUI ==============
+    function renderAujourdhui() {
+      const jour = jourCourant();
+      if (!jour) return;
+
+      // Activité du jour
+      document.getElementById('activite-title').textContent = jour.type || '—';
+      const sub = jour.horaire_seance || jour.activite || jour.rituel || '';
+      document.getElementById('activite-sub').textContent = sub;
+
+      // Statut de la séance
+      const statut = STATE.seances[jour.date];
+      document.querySelectorAll('#activite-buttons .btn').forEach(b => {
+        b.classList.toggle('selected', b.dataset.statut === statut);
+      });
+
+      // Repas du jour
+      renderRepasList(jour);
+
+      // Poids
+      const poidsAuj = STATE.poids[jour.date];
+      const poidsDepart = DATA.profil.poids_depart_kg || 105;
+      const poidsObj = DATA.profil.poids_objectif_kg || 92;
+      document.getElementById('poids-actuel').textContent = poidsAuj ? poidsAuj.toFixed(1).replace('.', ',') : '—';
+      if (poidsAuj) {
+        const perdu = poidsDepart - poidsAuj;
+        const elDelta = document.getElementById('poids-delta');
+        elDelta.textContent = perdu > 0 ? `↓ -${perdu.toFixed(1).replace('.', ',')} kg` : `—`;
+        elDelta.className = perdu > 0 ? 'stat-delta-positive' : '';
+        const aPerdre = poidsDepart - poidsObj;
+        const pct = Math.max(0, Math.min(100, Math.round((perdu / aPerdre) * 100)));
+        document.getElementById('poids-progress').style.width = pct + '%';
+      }
+
+      // Ressenti déjà saisi ?
+      const r = STATE.ressenti[jour.date];
+      if (r) {
+        if (r.energie != null) {
+          document.getElementById('energie-slider').value = r.energie;
+          document.getElementById('energie-value').textContent = r.energie;
+        }
+        if (r.humeur != null) {
+          document.querySelectorAll('#humeur-row .emoji-btn').forEach(b => {
+            b.classList.toggle('selected', String(b.dataset.humeur) === String(r.humeur));
+          });
+        }
+        if (r.genou) {
+          document.querySelectorAll('#genou-row .pill-btn').forEach(b => {
+            b.classList.remove('selected-ok', 'selected-warning', 'selected-danger');
+            if (b.dataset.genou === r.genou) {
+              const cls = r.genou === 'ok' ? 'selected-ok' : r.genou === 'sensible' ? 'selected-warning' : 'selected-danger';
+              b.classList.add(cls);
+            }
+          });
+        }
+      }
+
+      // Aperçu 3 prochains jours
+      renderPreview3Days();
+
+      // Tip du jour
+      const tips = [
+        'Genou droit : sur la marche, garde un rythme régulier sans dénivelé brutal.',
+        'Cardio Zone 2 : tu dois pouvoir tenir une conversation complète sans t\'essouffler.',
+        'Hydrate-toi : 1 grand verre d\'eau avant chaque repas active la digestion.',
+        'Coucher avant 23h30 — le sommeil est le levier numéro 1 de la perte de poids.',
+        'Règle Berthou : paume = protéine, poing = féculent, main = légumes à volonté.'
+      ];
+      const tipIdx = new Date().getDate() % tips.length;
+      document.getElementById('tip-text').textContent = tips[tipIdx];
+      document.getElementById('tip-box').style.display = 'block';
+    }
+
+    function renderRepasList(jour) {
+      const el = document.getElementById('repas-list');
+      el.innerHTML = '';
+      const repas = jour.repas || {};
+      const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
+      order.forEach(key => {
+        if (!repas[key]) return;
+        const r = repas[key];
+        const heure = r.heure || '';
+        const plat = r.plat || r.plat_famille || (r.options ? r.options.join(' / ') : '—');
+        const repasKey = `${jour.date}_${key}`;
+        const checked = STATE.repas[repasKey] === true;
+        const div = document.createElement('div');
+        div.className = 'repas-item';
+        div.innerHTML = `
+          <div style="flex:1;">
+            <p class="repas-time">${heure} · ${labelRepas(key)}</p>
+            <p class="repas-name">${plat}</p>
+          </div>
+          <div class="repas-checkbox ${checked ? 'checked' : ''}" data-repas-key="${repasKey}">${checked ? '✓' : ''}</div>
+        `;
+        el.appendChild(div);
+      });
+    }
+    function labelRepas(key) {
+      const map = {
+        dejeuner: 'Déjeuner',
+        collation_matin: 'Collation matin',
+        diner: 'Dîner',
+        collation_apres_midi: 'Collation',
+        collation_post_seance: 'Collation post-séance',
+        souper: 'Souper'
+      };
+      return map[key] || key;
+    }
+
+    function renderPreview3Days() {
+      const el = document.getElementById('preview-3days');
+      el.innerHTML = '';
+      const idx = getCurrentJourIndex();
+      for (let i = 1; i <= 3; i++) {
+        const j = DATA.semaine.jours[idx + i];
+        if (!j) continue;
+        const labels = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
+        const d = new Date(j.date + 'T00:00:00');
+        const lab = labels[(d.getDay() + 6) % 7];
+        const num = d.getDate();
+        const icon = j.type.includes('Salle') ? '🏋️' : j.type.includes('Actif') ? '🚶' : j.type.includes('Repos') || j.type.includes('Pont') ? '🛌' : j.type.includes('Ascension') ? '🎉' : '📅';
+        const name = j.type.replace(/[💪🚶🌅😴🎉]/g, '').trim();
+        const div = document.createElement('div');
+        div.className = 'preview-day';
+        div.innerHTML = `
+          <p class="preview-day-label">${lab} ${num}</p>
+          <span class="preview-day-icon">${icon}</span>
+          <p class="preview-day-name">${name.split(' ').slice(0, 2).join(' ')}</p>
+        `;
+        el.appendChild(div);
+      }
+    }
+
+    // ============== ÉCRAN PROGRAMME ==============
+    function renderProgramme() {
+      document.getElementById('semaine-titre').textContent = `Semaine ${DATA.semaine.numero || 1}`;
+      const el = document.getElementById('jours-list');
+      el.innerHTML = '';
+      const today = todayISO();
+      DATA.semaine.jours.forEach(j => {
+        const d = new Date(j.date + 'T00:00:00');
+        const labels = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
+        const lab = labels[(d.getDay() + 6) % 7];
+        const num = d.getDate();
+        const statut = STATE.seances[j.date];
+        let accent = '#D3D1C7';
+        let icon = '○';
+        if (j.date === today) { accent = '#D85A30'; icon = '⏰'; }
+        else if (j.date < today) {
+          accent = statut === 'fait' ? '#1D9E75' : statut === 'partiel' ? '#FAC775' : statut === 'rate' ? '#A32D2D' : '#888780';
+          icon = statut === 'fait' ? '✓' : statut === 'partiel' ? '~' : statut === 'rate' ? '✗' : '○';
+        }
+        if (j.type.includes('Repos') || j.type.includes('Pont') || j.type.includes('Ascension')) {
+          if (j.date >= today) { accent = '#FAC775'; icon = '🛌'; }
+        }
+        const card = document.createElement('div');
+        card.className = 'jour-card';
+        card.style.borderLeft = `4px solid ${accent}`;
+        const title = j.type.replace(/[💪🚶🌅😴🎉]/g, '').trim();
+        const sub = j.horaire_seance || j.activite || '';
+        card.innerHTML = `
+          <div class="jour-date">
+            <p class="jour-date-label" style="${j.date === today ? 'color:#D85A30; font-weight:500;' : ''}">${lab}</p>
+            <p class="jour-date-num" style="${j.date === today ? 'color:#D85A30;' : ''}">${num}</p>
+          </div>
+          <div class="jour-info">
+            <p class="jour-info-title">${title}</p>
+            <p class="jour-info-sub">${sub}</p>
+          </div>
+          <span class="jour-status" style="color:${accent};">${icon}</span>
+        `;
+        if (j.programme_salle_id) {
+          card.style.cursor = 'pointer';
+          card.addEventListener('click', () => showSalleDetail(j.programme_salle_id));
+        }
+        el.appendChild(card);
+      });
+    }
+
+    function showSalleDetail(salleId) {
+      const salle = DATA.semaine.programmes_salle[salleId];
+      if (!salle) return;
+      const el = document.getElementById('salle-detail');
+      el.style.display = 'block';
+      el.innerHTML = `
+        <div class="programme-detail">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <p style="font-size:14px; font-weight:500;">🏋️ Séance ${salle.date} · ${salle.duree_totale}</p>
+            <button class="btn-outline" style="border:none; background:none; font-size:18px; cursor:pointer;" id="close-salle">✕</button>
+          </div>
+          <p class="card-sub" style="margin-bottom:14px;">${salle.contrainte || ''} · ${salle.horaire || ''}</p>
+
+          <div class="programme-section">
+            <h3>⏱️ Échauffement — ${salle.echauffement.duree}</h3>
+            <ul style="margin-left:18px; font-size:12px; line-height:1.7;">
+              ${salle.echauffement.elements.map(e => '<li>' + e + '</li>').join('')}
+            </ul>
+          </div>
+
+          <div class="programme-section">
+            <h3>🏋️ Force — ${salle.force.duree}</h3>
+            <p class="card-sub" style="margin-bottom:8px;">💡 ${salle.force.regle_genou}</p>
+            <table class="exo-table">
+              <thead><tr><th>Exercice</th><th>S × R</th><th>Charge</th></tr></thead>
+              <tbody>
+                ${salle.force.exercices.map(ex => `
+                  <tr>
+                    <td>${ex.nom}</td>
+                    <td>${ex.series} × ${ex.reps}</td>
+                    <td>${ex.charge_cible || ex.charge_utilisee || '—'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="programme-section">
+            <h3>🫀 Cardio Zone 2 — ${salle.cardio_zone_2.duree}</h3>
+            <p style="font-size:12px; line-height:1.6;">Machine : ${salle.cardio_zone_2.machine}<br>FC cible : ${salle.cardio_zone_2.fc_cible}</p>
+          </div>
+
+          <div class="programme-section">
+            <h3>🧘 Récupération — ${salle.recuperation.duree}</h3>
+            <ul style="margin-left:18px; font-size:12px; line-height:1.7;">
+              ${salle.recuperation.elements.map(e => '<li>' + e + '</li>').join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+      document.getElementById('close-salle').addEventListener('click', () => {
+        el.style.display = 'none';
+      });
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ============== ÉCRAN REPAS ==============
+    function renderRepas() {
+      const jour = jourCourant();
+      if (!jour) return;
+      const el = document.getElementById('repas-fiches');
+      el.innerHTML = '';
+      const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
+      order.forEach(key => {
+        if (!jour.repas[key]) return;
+        const r = jour.repas[key];
+        const card = document.createElement('div');
+        card.className = 'recipe-card';
+        const plat = r.plat || r.plat_famille || (r.options ? r.options.join(' / ') : '—');
+        let portionsHTML = '';
+        if (r.portions_lorenzo && r.portions_lorenzo.length) {
+          portionsHTML = `
+            <div class="recipe-section">
+              <p class="recipe-section-title">Portions (Berthou)</p>
+              ${r.portions_lorenzo.map(p => `<p class="recipe-info">${p.aliment} — ${p.portion}</p>`).join('')}
+            </div>
+          `;
+        }
+        const noteHTML = r.note ? `<div class="berthou-ok">💡 ${r.note}</div>` : '';
+        card.innerHTML = `
+          <p class="recipe-time">${labelRepas(key).toUpperCase()} · ${r.heure || ''}</p>
+          <p class="recipe-name">${plat}</p>
+          ${portionsHTML}
+          ${noteHTML}
+        `;
+        el.appendChild(card);
+      });
+    }
+
+    // ============== ÉCRAN BILANS ==============
+    function renderBilans() {
+      // Courbe poids
+      const jours = DATA.semaine.jours;
+      const points = [];
+      const poidsDepart = DATA.profil.poids_depart_kg || 105;
+      jours.forEach((j, i) => {
+        const p = STATE.poids[j.date] || (i === 0 ? poidsDepart : null);
+        if (p) points.push({ x: i, y: p });
+      });
+      if (points.length >= 2) {
+        const xs = points.map(p => p.x);
+        const ys = points.map(p => p.y);
+        const xMin = 0, xMax = jours.length - 1;
+        const yMin = Math.min(...ys) - 0.5;
+        const yMax = Math.max(...ys) + 0.5;
+        const norm = points.map(p => {
+          const nx = ((p.x - xMin) / (xMax - xMin)) * 300;
+          const ny = 90 - ((p.y - yMin) / (yMax - yMin)) * 80;
+          return `${nx.toFixed(1)},${ny.toFixed(1)}`;
+        });
+        document.getElementById('poids-line').setAttribute('points', norm.join(' '));
+        const delta = ys[ys.length - 1] - ys[0];
+        document.getElementById('poids-trend').textContent =
+          `${ys[0].toFixed(1).replace('.', ',')} → ${ys[ys.length - 1].toFixed(1).replace('.', ',')} kg (${delta >= 0 ? '+' : ''}${delta.toFixed(1).replace('.', ',')} kg)`;
+      } else {
+        document.getElementById('poids-trend').textContent = 'Pas assez de données';
+      }
+
+      // Énergie moyenne
+      const energies = Object.values(STATE.ressenti).map(r => r.energie).filter(e => e != null);
+      const energieMoy = energies.length ? (energies.reduce((a, b) => a + b, 0) / energies.length).toFixed(1).replace('.', ',') : '—';
+      document.getElementById('energie-moy').textContent = energieMoy;
+
+      // Adhérence séances
+      const seancesPlaniees = jours.filter(j => j.type.includes('Salle') || j.type.includes('Actif')).length;
+      const seancesFaites = jours.filter(j => (j.type.includes('Salle') || j.type.includes('Actif')) && STATE.seances[j.date] === 'fait').length;
+      const adh = seancesPlaniees ? Math.round((seancesFaites / seancesPlaniees) * 100) : 0;
+      document.getElementById('adherence').textContent = adh;
+
+      // Bilan semaine
+      const bilan = DATA.semaine.bilan_semaine || {};
+      const el = document.getElementById('bilan-semaine-content');
+      el.innerHTML = `
+        <p style="font-size:12px; line-height:1.6;">
+          <strong>Séances :</strong> ${bilan.seances_realisees || '—'}<br>
+          <strong>Énergie moy :</strong> ${bilan.energie_moyenne || '—'}/10<br>
+          <strong>Sommeil moy :</strong> ${bilan.sommeil_moyen || '—'}/10
+        </p>
+        ${bilan.points_forts ? '<p class="card-label" style="margin-top:12px;">Points forts</p><ul style="margin-left:18px; font-size:12px; line-height:1.6;">' + bilan.points_forts.map(p => '<li>' + p + '</li>').join('') + '</ul>' : ''}
+        ${bilan.axes_amelioration ? '<p class="card-label" style="margin-top:12px;">À améliorer</p><ul style="margin-left:18px; font-size:12px; line-height:1.6;">' + bilan.axes_amelioration.map(p => '<li>' + p + '</li>').join('') + '</ul>' : ''}
+      `;
+    }
+
+    // ============== INTERACTIONS ==============
+    function setupNavigation() {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.screen;
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+          document.getElementById('screen-' + target).classList.add('active');
+          document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          window.scrollTo(0, 0);
+        });
+      });
+    }
+
+    function setupRessenti() {
+      const slider = document.getElementById('energie-slider');
+      slider.addEventListener('input', () => {
+        document.getElementById('energie-value').textContent = slider.value;
+        const today = todayISO();
+        STATE.ressenti[today] = STATE.ressenti[today] || {};
+        STATE.ressenti[today].energie = parseInt(slider.value);
+        saveState();
+      });
+      document.querySelectorAll('#humeur-row .emoji-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#humeur-row .emoji-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          const today = todayISO();
+          STATE.ressenti[today] = STATE.ressenti[today] || {};
+          STATE.ressenti[today].humeur = parseInt(btn.dataset.humeur);
+          saveState();
+        });
+      });
+      document.querySelectorAll('#genou-row .pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#genou-row .pill-btn').forEach(b => {
+            b.classList.remove('selected-ok', 'selected-warning', 'selected-danger');
+          });
+          const g = btn.dataset.genou;
+          const cls = g === 'ok' ? 'selected-ok' : g === 'sensible' ? 'selected-warning' : 'selected-danger';
+          btn.classList.add(cls);
+          const today = todayISO();
+          STATE.ressenti[today] = STATE.ressenti[today] || {};
+          STATE.ressenti[today].genou = g;
+          saveState();
+        });
+      });
+    }
+
+    function setupActivite() {
+      document.querySelectorAll('#activite-buttons .btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const statut = btn.dataset.statut;
+          const today = todayISO();
+          const jour = getJourByDate(today) || jourCourant();
+          STATE.seances[jour.date] = statut;
+          saveState();
+          document.querySelectorAll('#activite-buttons .btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          // Déclencher modale si "Pas fait"
+          if (statut === 'rate') {
+            openSeanceRateeModal(jour);
+          } else {
+            checkRulesAndShowAlerts();
+          }
+        });
+      });
+    }
+
+    function setupRepasCheckboxes() {
+      document.getElementById('repas-list').addEventListener('click', (e) => {
+        const box = e.target.closest('.repas-checkbox');
+        if (!box) return;
+        const key = box.dataset.repasKey;
+        const wasChecked = STATE.repas[key] === true;
+        const checked = !wasChecked;
+        STATE.repas[key] = checked;
+        saveState();
+        box.classList.toggle('checked', checked);
+        box.textContent = checked ? '✓' : '';
+        // Si on décoche un repas (passage à non fait), proposer la modale
+        if (wasChecked === false && checked === false) return; // pas une transition
+        if (!checked) {
+          // L'utilisateur a décoché → repas raté
+          const parts = key.split('_');
+          const date = parts[0];
+          const moment = parts.slice(1).join('_');
+          const jour = getJourByDate(date);
+          if (jour) openRepasRateModal(jour, moment);
+        }
+      });
+    }
+
+    // ============== MODALES ==============
+    function openModal(id) {
+      document.getElementById(id).classList.add('show');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+    function setupModalClose() {
+      document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', () => closeModal(btn.dataset.close));
+      });
+      document.querySelectorAll('.modal-overlay').forEach(ov => {
+        ov.addEventListener('click', (e) => {
+          if (e.target === ov) ov.classList.remove('show');
+        });
+      });
+    }
+
+    // --- Séance ratée ---
+    let currentSeanceJour = null;
+    function openSeanceRateeModal(jour) {
+      currentSeanceJour = jour;
+      document.getElementById('seance-ratee-sub').textContent =
+        `${jour.type} — ${jour.jour_semaine} ${formatDateFR(jour.date)}`;
+      // Reset des sélections
+      document.querySelectorAll('#seance-cause-pills .cause-pill').forEach(p => p.classList.remove('selected'));
+      // Suggérer le prochain jour libre
+      const suggest = findNextFreeDay(jour);
+      document.getElementById('report-suggest-day').textContent = suggest
+        ? `${suggest.jour_semaine} ${new Date(suggest.date + 'T00:00:00').getDate()}`
+        : '(aucun jour libre)';
+      openModal('modal-seance-ratee');
+    }
+    function findNextFreeDay(jour) {
+      const idx = DATA.semaine.jours.findIndex(j => j.date === jour.date);
+      for (let i = idx + 1; i < DATA.semaine.jours.length; i++) {
+        const j = DATA.semaine.jours[i];
+        if (j.type.includes('Repos') || j.type.includes('Pont') || j.type.includes('Ascension')) {
+          continue; // saut des jours déjà off
+        }
+        if (j.type.includes('Salle')) continue; // déjà chargé
+        return j;
+      }
+      return null;
+    }
+    function setupSeanceRateeModal() {
+      // Sélection cause
+      document.querySelectorAll('#seance-cause-pills .cause-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#seance-cause-pills .cause-pill').forEach(p => p.classList.remove('selected'));
+          btn.classList.add('selected');
+          const cause = btn.dataset.cause;
+          if (!currentSeanceJour) return;
+          STATE.seances_causes = STATE.seances_causes || {};
+          STATE.seances_causes[currentSeanceJour.date] = cause;
+          saveState();
+          // Si cause = genou → bloquer squats lourds 7 jours
+          if (cause === 'genou') {
+            const until = new Date();
+            until.setDate(until.getDate() + 7);
+            STATE.bloquer_squats_jusqu = until.toISOString().split('T')[0];
+            saveState();
+          }
+        });
+      });
+      // Actions
+      document.querySelectorAll('#seance-options .modal-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          const action = opt.dataset.action;
+          if (!currentSeanceJour) return;
+          if (action === 'report-suggest') {
+            const suggest = findNextFreeDay(currentSeanceJour);
+            if (suggest) {
+              STATE.reports = STATE.reports || [];
+              STATE.reports.push({ de: currentSeanceJour.date, vers: suggest.date, type: currentSeanceJour.type });
+              saveState();
+              alert(`Séance reportée à ${suggest.jour_semaine} ${formatDateFR(suggest.date)}.`);
+            }
+          } else if (action === 'report-choose') {
+            const d = prompt('Quel jour ? (format AAAA-MM-JJ)');
+            if (d) {
+              STATE.reports = STATE.reports || [];
+              STATE.reports.push({ de: currentSeanceJour.date, vers: d, type: currentSeanceJour.type });
+              saveState();
+              alert(`Séance reportée au ${d}.`);
+            }
+          } else if (action === 'annuler') {
+            // Option D : pas de surcharge, ajustement nutrition douce
+            STATE.adaptations = STATE.adaptations || [];
+            STATE.adaptations.push({
+              date: currentSeanceJour.date,
+              type: 'seance_annulee',
+              action: 'reduction_feculents_souper'
+            });
+            saveState();
+            alert('Option D appliquée : féculents du souper réduits à 1/5.');
+          }
+          closeModal('modal-seance-ratee');
+          renderProgramme();
+          checkRulesAndShowAlerts();
+        });
+      });
+    }
+
+    // --- Repas raté ---
+    let currentRepasContext = null;
+    function openRepasRateModal(jour, moment) {
+      currentRepasContext = { jour, moment };
+      const repas = jour.repas[moment];
+      const plat = repas ? (repas.plat || repas.plat_famille || labelRepas(moment)) : labelRepas(moment);
+      document.getElementById('repas-rate-sub').textContent =
+        `${plat} — ${jour.jour_semaine} ${labelRepas(moment).toLowerCase()}`;
+      document.getElementById('alt-recettes-zone').style.display = 'none';
+      openModal('modal-repas-rate');
+    }
+    function setupRepasRateModal() {
+      // Action "reporter à demain"
+      document.querySelector('[data-action="repas-reporter"]').addEventListener('click', () => {
+        if (!currentRepasContext) return;
+        STATE.reports_repas = STATE.reports_repas || [];
+        STATE.reports_repas.push({ ...currentRepasContext, action: 'report' });
+        saveState();
+        alert(`Repas reporté à demain. Les repas suivants seront décalés.`);
+        closeModal('modal-repas-rate');
+      });
+      // Action "annuler" → affiche alternatives
+      document.querySelector('[data-action="repas-annuler"]').addEventListener('click', () => {
+        document.getElementById('alt-recettes-zone').style.display = 'block';
+        renderAlternatives();
+      });
+    }
+    function renderAlternatives() {
+      // 3 alternatives Berthou-compatibles
+      const alts = [
+        {
+          nom: '🥚 Omelette 3 œufs + salade verte',
+          ingredients: '3 œufs · 1 cs huile olive · 1 grosse poignée de salade verte · 1 c.s. vinaigrette · 1/4 oignon · sel/poivre',
+          cuisson: 'Battre les œufs · poêle chaude avec huile · cuire 3-4 min en remuant · salade à côté avec vinaigrette légère'
+        },
+        {
+          nom: '🐟 Thon en boîte + tomate + haricots',
+          ingredients: '1 boîte thon nature 120g · 1 tomate · 80g haricots blancs cuits · 1 cs huile olive · jus de citron · persil',
+          cuisson: 'Égoutter le thon · couper tomate en dés · rincer les haricots · mélanger le tout · huile olive + citron + persil'
+        },
+        {
+          nom: '🥗 Bowl yaourt grec + flocons + amandes',
+          ingredients: '200g yaourt grec nature · 30g flocons d\'avoine · 20g amandes effilées · 1 fruit (pomme/poire) · cannelle',
+          cuisson: 'Aucune cuisson · mélanger yaourt + flocons · ajouter amandes + fruit coupé · saupoudrer cannelle'
+        }
+      ];
+      const list = document.getElementById('alt-recettes-list');
+      list.innerHTML = '';
+      alts.forEach((alt, i) => {
+        const div = document.createElement('div');
+        div.className = 'alt-recette';
+        div.innerHTML = `
+          <p class="alt-recette-name">${alt.nom}</p>
+          <p style="font-size:11px; color:#5F5E5A;">Touche pour voir le détail</p>
+          <div class="alt-recette-detail">
+            <strong>Ingrédients (1 pers) :</strong> ${alt.ingredients}<br>
+            <strong>Cuisson :</strong> ${alt.cuisson}
+            <button class="alt-choose" data-alt="${i}">Choisir cette alternative</button>
+          </div>
+        `;
+        div.addEventListener('click', (e) => {
+          if (e.target.classList.contains('alt-choose')) {
+            const idx = parseInt(e.target.dataset.alt);
+            STATE.alternatives_choisies = STATE.alternatives_choisies || [];
+            STATE.alternatives_choisies.push({
+              date: currentRepasContext.jour.date,
+              moment: currentRepasContext.moment,
+              alternative: alts[idx].nom
+            });
+            saveState();
+            alert(`Alternative "${alts[idx].nom}" enregistrée.`);
+            closeModal('modal-repas-rate');
+            return;
+          }
+          div.classList.toggle('open');
+        });
+        list.appendChild(div);
+      });
+    }
+
+    // --- Choix perso niveau 1 ---
+    function setupChoixPerso() {
+      document.getElementById('open-choix-perso').addEventListener('click', () => {
+        document.getElementById('perso-input').value = '';
+        document.getElementById('perso-verdict-zone').innerHTML = '';
+        openModal('modal-choix-perso');
+      });
+      document.getElementById('perso-evaluate').addEventListener('click', () => {
+        const txt = document.getElementById('perso-input').value.trim();
+        if (!txt) return;
+        const verdict = evaluateRepasPerso(txt);
+        const zone = document.getElementById('perso-verdict-zone');
+        zone.innerHTML = `
+          <div class="perso-verdict ${verdict.classe}">
+            <strong>${verdict.titre}</strong>
+            ${verdict.message}
+          </div>
+        `;
+      });
+    }
+    function evaluateRepasPerso(txt) {
+      const t = txt.toLowerCase();
+      // Détection des 3 catégories Berthou
+      const proteines = ['poulet', 'dinde', 'bœuf', 'boeuf', 'porc', 'œuf', 'oeuf', 'jambon', 'thon',
+                        'saumon', 'cabillaud', 'poisson', 'tofu', 'lentille', 'pois chiche',
+                        'haricot', 'cottage', 'yaourt', 'fromage', 'gruyère', 'mozzarella', 'parmesan',
+                        'feta', 'ricotta', 'crevette', 'sardine', 'maquereau'];
+      const legumes = ['salade', 'tomate', 'courgette', 'brocoli', 'carotte', 'épinard', 'roquette',
+                      'concombre', 'poivron', 'aubergine', 'haricot vert', 'asperge', 'fenouil',
+                      'chou', 'champignon', 'oignon', 'légume', 'crudité', 'mâche', 'endive'];
+      const feculents = ['pâtes', 'pates', 'riz', 'quinoa', 'pain', 'pomme de terre', 'patate',
+                        'semoule', 'boulgour', 'lentille', 'pois', 'haricot blanc', 'avoine',
+                        'tresse', 'baguette', 'gnocchi', 'polenta'];
+      const feuRouge = ['frite', 'fritte', 'fri ', 'panée', 'pané ', 'burger', 'pizza', 'kebab',
+                       'sirop', 'soda', 'coca', 'sprite', 'fanta', 'alcool', 'vin', 'bière', 'biere',
+                       'cocktail', 'pâtisserie', 'patisserie', 'glace', 'crème glacée', 'chips',
+                       'biscuit', 'gâteau', 'gateau', 'donut', 'muffin', 'croissant', 'pain au chocolat'];
+      const aP = proteines.some(p => t.includes(p));
+      const aL = legumes.some(l => t.includes(l));
+      const aF = feculents.some(f => t.includes(f));
+      const aRouge = feuRouge.filter(r => t.includes(r));
+      let categoriesOK = 0;
+      if (aP) categoriesOK++;
+      if (aL) categoriesOK++;
+      if (aF) categoriesOK++;
+
+      if (aRouge.length > 0 && categoriesOK < 2) {
+        return {
+          classe: 'bad',
+          titre: '🔴 Pas top',
+          message: `Aliments à limiter détectés (${aRouge.join(', ')}) et catégories Berthou incomplètes.<br><br>
+            <strong>Suggestions :</strong><br>
+            • Remplace par une option plus équilibrée<br>
+            • Vise au moins : 1 protéine + 1 légume + 1 féculent complet<br>
+            • Ex : poulet grillé + salade + 1 poing de riz`
+        };
+      }
+      if (categoriesOK >= 3 && aRouge.length === 0) {
+        return {
+          classe: 'ok',
+          titre: '🟢 OK',
+          message: `Bon repas équilibré : protéine ✓ · légume ✓ · féculent ✓<br>
+            Règle Berthou respectée. Pense à doser : 🤚 paume protéine, ✊ poing féculent, 🫲 légumes à volonté.`
+        };
+      }
+      if (categoriesOK >= 2) {
+        const manque = [];
+        if (!aP) manque.push('protéine (poulet, poisson, œufs, cottage…)');
+        if (!aL) manque.push('légume (salade, brocoli, courgette…)');
+        if (!aF) manque.push('féculent (riz, quinoa, pain complet, pâtes…)');
+        let msg = `Bon début mais manque : <strong>${manque.join(' et ')}</strong>.<br>`;
+        if (aRouge.length) msg += `<br>Aussi à limiter : ${aRouge.join(', ')}.`;
+        msg += `<br><br>Ajoute un élément simple pour équilibrer.`;
+        return { classe: 'warning', titre: '🟠 À adapter', message: msg };
+      }
+      return {
+        classe: 'bad',
+        titre: '🔴 Pas top',
+        message: `Repas déséquilibré — il manque ${3 - categoriesOK} catégorie(s) Berthou.<br><br>
+          <strong>Suggestions :</strong><br>
+          • Salade poulet roquette + tomate + 1 poing de riz<br>
+          • Omelette 3 œufs + salade verte + 1 tranche pain complet<br>
+          • Thon + haricots blancs + courgettes grillées`
+      };
+    }
+
+    // ============== RÈGLES D'ADAPTATION AUTO ==============
+    function checkRulesAndShowAlerts() {
+      const zone = document.getElementById('alerts-zone');
+      zone.innerHTML = '';
+      const alerts = [];
+
+      // Règle 1 : ≥3 séances ratées sur 14 jours
+      const ratees = countSeancesRatees(14);
+      if (ratees >= 3) {
+        alerts.push({
+          titre: '⚠️ Pattern détecté',
+          texte: `${ratees} séances ratées en 14 jours. À discuter au prochain bilan dominical — peut-être simplifier le programme ?`
+        });
+      }
+
+      // Règle 2 : poids non saisi depuis 2+ jours
+      const dernierePeseDate = getDateLastPesee();
+      if (dernierePeseDate) {
+        const diffJ = daysBetween(dernierePeseDate, todayISO());
+        if (diffJ >= 2) {
+          alerts.push({
+            titre: '⚖️ Saisie poids',
+            texte: `Tu n'as pas pesé depuis ${diffJ} jours. Saisie recommandée pour suivre la tendance.`
+          });
+        }
+      }
+
+      // Règle 3 : blocage squats si genou douloureux
+      if (STATE.bloquer_squats_jusqu && STATE.bloquer_squats_jusqu >= todayISO()) {
+        alerts.push({
+          titre: '🦵 Genou ménagé',
+          texte: `Squats lourds bloqués jusqu'au ${STATE.bloquer_squats_jusqu}. Repos articulaire en cours.`
+        });
+      }
+
+      // Règle 4 : énergie basse 3 jours de suite
+      const energiesBasses = checkEnergieBasse(3);
+      if (energiesBasses) {
+        alerts.push({
+          titre: '🔋 Énergie basse',
+          texte: `Énergie ≤ 5/10 sur 3 jours. Forcer une journée récupération complète et vérifier sommeil.`
+        });
+      }
+
+      alerts.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'alert-banner';
+        div.innerHTML = `
+          <p class="alert-banner-title">${a.titre}</p>
+          <p class="alert-banner-text">${a.texte}</p>
+        `;
+        zone.appendChild(div);
+      });
+    }
+    function countSeancesRatees(jours) {
+      const limite = new Date();
+      limite.setDate(limite.getDate() - jours);
+      const limiteStr = limite.toISOString().split('T')[0];
+      return Object.entries(STATE.seances).filter(([date, statut]) =>
+        date >= limiteStr && statut === 'rate'
+      ).length;
+    }
+    function getDateLastPesee() {
+      const dates = Object.keys(STATE.poids).sort();
+      return dates.length ? dates[dates.length - 1] : null;
+    }
+    function daysBetween(d1, d2) {
+      const t1 = new Date(d1 + 'T00:00:00').getTime();
+      const t2 = new Date(d2 + 'T00:00:00').getTime();
+      return Math.round((t2 - t1) / 86400000);
+    }
+    function checkEnergieBasse(jours) {
+      const ressentis = Object.entries(STATE.ressenti)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .slice(-jours);
+      if (ressentis.length < jours) return false;
+      return ressentis.every(([_, r]) => r.energie != null && r.energie <= 5);
+    }
+
+    function setupToggles() {
+      document.querySelectorAll('.toggle').forEach(t => {
+        t.addEventListener('click', () => {
+          t.classList.toggle('on');
+          const id = t.dataset.toggle;
+          if (id === 'notif-seance') STATE.notifications.seance = t.classList.contains('on');
+          if (id === 'notif-poids') STATE.notifications.poids = t.classList.contains('on');
+          if (id === 'notif-soir') STATE.notifications.soir = t.classList.contains('on');
+          if (id === 'notif-hebdo') STATE.notifications.hebdo = t.classList.contains('on');
+          saveState();
+        });
+      });
+    }
+
+    function setupReglagesActions() {
+      document.getElementById('btn-export').addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(STATE, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `sante-lorenzo-${todayISO()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+      document.getElementById('btn-import').addEventListener('click', () => {
+        alert('Import Notion sera disponible en sous-étape 5.2');
+      });
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        if (confirm('Tout effacer ? Cette action est irréversible.')) {
+          localStorage.removeItem(STORAGE_KEY);
+          location.reload();
+        }
+      });
+    }
+
+    // ============== DÉMARRAGE ==============
+    document.addEventListener('DOMContentLoaded', init);
+
+    // ============== SERVICE WORKER (PWA hors-ligne) ==============
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => console.log('SW enregistré :', reg.scope))
+          .catch(err => console.warn('SW erreur :', err));
+      });
+    }
+  </script>
+</body>
+</html>
