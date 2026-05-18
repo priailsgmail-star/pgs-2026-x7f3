@@ -735,8 +735,6 @@
       <button class="pill-btn" style="border-radius: 16px; padding: 6px 12px;">Favoris</button>
       <button class="pill-btn" style="border-radius: 16px; padding: 6px 12px;">Courses</button>
     </div>
-    <button class="perso-btn" id="open-choix-perso">🍽 Évaluer mon repas perso</button>
-
     <div id="repas-fiches"><!-- généré dynamiquement --></div>
   </section>
 
@@ -1404,17 +1402,17 @@
     }
 
     function openChoixPersoForMeal(moment) {
-      // Pré-remplir la modale avec contexte du moment
+      currentEvaluateMoment = moment;
       const placeholders = {
-        dejeuner: 'Ex: tartine pain complet + 2 œufs + tomate',
-        collation_matin: 'Ex: pomme + 10 amandes',
-        diner: 'Ex: pâtes carbonara + pain · ou salade quinoa poulet roquette',
-        collation_apres_midi: 'Ex: yaourt grec + fruit',
-        collation_post_seance: 'Ex: cottage cheese + banane',
-        souper: 'Ex: poisson grillé + brocolis · ou pizza moitié-moitié'
+        dejeuner: 'Ex: 2 œufs + 1 tartine pain complet + café · ou : cottage + pain + miel',
+        collation_matin: 'Ex: 1 pomme + 10 amandes',
+        diner: 'Ex: poulet grillé + brocolis + 1 poing quinoa',
+        collation_apres_midi: 'Ex: yaourt grec + 1 fruit',
+        collation_post_seance: 'Ex: cottage + 1 banane · ou yaourt grec + fruit',
+        souper: 'Ex: poisson grillé + légumes vapeur · ou frittata + salade'
       };
       const titles = {
-        dejeuner: '🌅 Évaluer mon déjeuner',
+        dejeuner: '🌅 Évaluer mon déjeuner (matin)',
         collation_matin: '🍎 Évaluer ma collation matin',
         diner: '☀️ Évaluer mon dîner (midi)',
         collation_apres_midi: '🍎 Évaluer ma collation après-midi',
@@ -1760,20 +1758,26 @@
       });
     }
 
-    // --- Choix perso niveau 1 ---
+    // --- Choix perso niveau 1 (contextuel par moment) ---
+    let currentEvaluateMoment = null;
     function setupChoixPerso() {
-      document.getElementById('open-choix-perso').addEventListener('click', () => {
-        const input = document.getElementById('perso-input');
-        input.value = '';
-        input.placeholder = 'Ex : pâtes carbonara + 2 tranches pain · ou : salade poulet roquette tomate avec un peu de quinoa';
-        document.querySelector('#modal-choix-perso .modal-title').textContent = '🍽 Évaluer mon repas';
-        document.getElementById('perso-verdict-zone').innerHTML = '';
-        openModal('modal-choix-perso');
-      });
+      // Bouton générique supprimé en V1.2 — un addEventListener conditionnel reste safe
+      const btnOpen = document.getElementById('open-choix-perso');
+      if (btnOpen) {
+        btnOpen.addEventListener('click', () => {
+          currentEvaluateMoment = null;
+          const input = document.getElementById('perso-input');
+          input.value = '';
+          input.placeholder = 'Décris ton repas';
+          document.querySelector('#modal-choix-perso .modal-title').textContent = '🍽 Évaluer mon repas';
+          document.getElementById('perso-verdict-zone').innerHTML = '';
+          openModal('modal-choix-perso');
+        });
+      }
       document.getElementById('perso-evaluate').addEventListener('click', () => {
         const txt = document.getElementById('perso-input').value.trim();
         if (!txt) return;
-        const verdict = evaluateRepasPerso(txt);
+        const verdict = evaluateRepasPerso(txt, currentEvaluateMoment);
         const zone = document.getElementById('perso-verdict-zone');
         zone.innerHTML = `
           <div class="perso-verdict ${verdict.classe}">
@@ -1783,71 +1787,217 @@
         `;
       });
     }
-    function evaluateRepasPerso(txt) {
-      const t = txt.toLowerCase();
-      // Détection des 3 catégories Berthou
-      const proteines = ['poulet', 'dinde', 'bœuf', 'boeuf', 'porc', 'œuf', 'oeuf', 'jambon', 'thon',
-                        'saumon', 'cabillaud', 'poisson', 'tofu', 'lentille', 'pois chiche',
-                        'haricot', 'cottage', 'yaourt', 'fromage', 'gruyère', 'mozzarella', 'parmesan',
-                        'feta', 'ricotta', 'crevette', 'sardine', 'maquereau'];
-      const legumes = ['salade', 'tomate', 'courgette', 'brocoli', 'carotte', 'épinard', 'roquette',
-                      'concombre', 'poivron', 'aubergine', 'haricot vert', 'asperge', 'fenouil',
-                      'chou', 'champignon', 'oignon', 'légume', 'crudité', 'mâche', 'endive'];
-      const feculents = ['pâtes', 'pates', 'riz', 'quinoa', 'pain', 'pomme de terre', 'patate',
-                        'semoule', 'boulgour', 'lentille', 'pois', 'haricot blanc', 'avoine',
-                        'tresse', 'baguette', 'gnocchi', 'polenta'];
-      const feuRouge = ['frite', 'fritte', 'fri ', 'panée', 'pané ', 'burger', 'pizza', 'kebab',
-                       'sirop', 'soda', 'coca', 'sprite', 'fanta', 'alcool', 'vin', 'bière', 'biere',
-                       'cocktail', 'pâtisserie', 'patisserie', 'glace', 'crème glacée', 'chips',
-                       'biscuit', 'gâteau', 'gateau', 'donut', 'muffin', 'croissant', 'pain au chocolat'];
-      const aP = proteines.some(p => t.includes(p));
-      const aL = legumes.some(l => t.includes(l));
-      const aF = feculents.some(f => t.includes(f));
-      const aRouge = feuRouge.filter(r => t.includes(r));
-      let categoriesOK = 0;
-      if (aP) categoriesOK++;
-      if (aL) categoriesOK++;
-      if (aF) categoriesOK++;
+    // ============== ÉVALUATION CONTEXTUELLE PAR MOMENT (V1.2) ==============
+    // Dictionnaires d'aliments
+    const ALIMENTS = {
+      proteines: ['poulet', 'dinde', 'bœuf', 'boeuf', 'porc', 'œuf', 'oeuf', 'omelette', 'jambon',
+                  'thon', 'saumon', 'cabillaud', 'poisson', 'tofu', 'tempeh', 'crevette', 'sardine',
+                  'maquereau', 'truite', 'dorade', 'lieu', 'merlu', 'haddock'],
+      proteines_laitiers: ['cottage', 'yaourt grec', 'yaourt nature', 'fromage blanc', 'skyr', 'ricotta'],
+      proteines_fromage: ['gruyère', 'gruyere', 'mozzarella', 'parmesan', 'feta', 'fromage', 'comté', 'comte', 'emmental', 'brie', 'camembert'],
+      legumineuses: ['lentille', 'pois chiche', 'haricot blanc', 'haricot rouge', 'flageolet'],
+      legumes: ['salade', 'tomate', 'courgette', 'brocoli', 'carotte', 'épinard', 'epinard', 'roquette',
+                'concombre', 'poivron', 'aubergine', 'haricot vert', 'asperge', 'fenouil',
+                'chou', 'champignon', 'oignon', 'légume', 'legume', 'crudité', 'crudite', 'mâche', 'mache', 'endive',
+                'betterave', 'navet', 'radis', 'céleri', 'celeri', 'poireau', 'potiron', 'butternut'],
+      feculents_complets: ['pain complet', 'pain noir', 'pain de seigle', 'riz complet', 'riz basmati complet',
+                            'quinoa', 'pâtes complètes', 'pates completes', 'flocons d\'avoine', 'avoine', 'sarrasin', 'épeautre', 'epeautre'],
+      feculents_blancs: ['pâtes', 'pates', 'riz blanc', 'riz', 'baguette', 'pain blanc', 'semoule', 'gnocchi', 'polenta', 'pomme de terre', 'patate', 'tresse'],
+      fruits: ['pomme', 'poire', 'kiwi', 'orange', 'baie', 'fraise', 'framboise', 'myrtille', 'banane',
+               'pêche', 'peche', 'abricot', 'prune', 'cerise', 'mandarine', 'raisin', 'mangue', 'ananas', 'fruit'],
+      noix: ['amande', 'noix', 'noisette', 'cajou', 'pistache', 'pignon', 'graine'],
+      bons_gras: ['huile olive', 'huile d\'olive', 'avocat'],
+      boissons_ok: ['eau', 'citron', 'gingembre', 'thé', 'the', 'café', 'cafe', 'infusion', 'tisane'],
+      rituel_matin: ['citron + gingembre', 'citron gingembre', 'gingembre', 'citron'],
+      feu_rouge: ['frite', 'fritte', 'panée', 'pane ', 'burger', 'pizza', 'kebab', 'hot dog',
+                  'sirop', 'soda', 'coca', 'sprite', 'fanta', 'jus de fruit industriel',
+                  'cocktail', 'pâtisserie', 'patisserie', 'glace', 'crème glacée', 'creme glacee',
+                  'chips', 'biscuit', 'gâteau', 'gateau', 'donut', 'muffin', 'croissant',
+                  'pain au chocolat', 'pain choco', 'viennoiserie', 'confiture industrielle',
+                  'nutella', 'bonbon', 'sucre raffiné', 'sucre raffine'],
+      alcool: ['alcool', 'vin', 'bière', 'biere', 'whisky', 'rhum', 'vodka', 'champagne', 'apéro alcoolisé']
+    };
 
-      if (aRouge.length > 0 && categoriesOK < 2) {
-        return {
-          classe: 'bad',
-          titre: '🔴 Pas top',
-          message: `Aliments à limiter détectés (${aRouge.join(', ')}) et catégories Berthou incomplètes.<br><br>
-            <strong>Suggestions :</strong><br>
-            • Remplace par une option plus équilibrée<br>
-            • Vise au moins : 1 protéine + 1 légume + 1 féculent complet<br>
-            • Ex : poulet grillé + salade + 1 poing de riz`
-        };
-      }
-      if (categoriesOK >= 3 && aRouge.length === 0) {
-        return {
-          classe: 'ok',
-          titre: '🟢 OK',
-          message: `Bon repas équilibré : protéine ✓ · légume ✓ · féculent ✓<br>
-            Règle Berthou respectée. Pense à doser : 🤚 paume protéine, ✊ poing féculent, 🫲 légumes à volonté.`
-        };
-      }
-      if (categoriesOK >= 2) {
-        const manque = [];
-        if (!aP) manque.push('protéine (poulet, poisson, œufs, cottage…)');
-        if (!aL) manque.push('légume (salade, brocoli, courgette…)');
-        if (!aF) manque.push('féculent (riz, quinoa, pain complet, pâtes…)');
-        let msg = `Bon début mais manque : <strong>${manque.join(' et ')}</strong>.<br>`;
-        if (aRouge.length) msg += `<br>Aussi à limiter : ${aRouge.join(', ')}.`;
-        msg += `<br><br>Ajoute un élément simple pour équilibrer.`;
-        return { classe: 'warning', titre: '🟠 À adapter', message: msg };
-      }
-      return {
-        classe: 'bad',
-        titre: '🔴 Pas top',
-        message: `Repas déséquilibré — il manque ${3 - categoriesOK} catégorie(s) Berthou.<br><br>
-          <strong>Suggestions :</strong><br>
-          • Salade poulet roquette + tomate + 1 poing de riz<br>
-          • Omelette 3 œufs + salade verte + 1 tranche pain complet<br>
-          • Thon + haricots blancs + courgettes grillées`
-      };
+    function detecter(t, liste) { return liste.some(x => t.includes(x)); }
+    function detecterAll(t, liste) { return liste.filter(x => t.includes(x)); }
+
+    function evaluateRepasPerso(txt, moment) {
+      const t = txt.toLowerCase();
+
+      // Détection des grandes familles
+      const aProteine = detecter(t, ALIMENTS.proteines) || detecter(t, ALIMENTS.proteines_laitiers) || detecter(t, ALIMENTS.legumineuses);
+      const aProtLeger = detecter(t, ALIMENTS.proteines_laitiers) || detecter(t, ALIMENTS.proteines_fromage);
+      const aLegume = detecter(t, ALIMENTS.legumes);
+      const aFeculentComplet = detecter(t, ALIMENTS.feculents_complets);
+      const aFeculentBlanc = detecter(t, ALIMENTS.feculents_blancs) && !aFeculentComplet;
+      const aFeculent = aFeculentComplet || aFeculentBlanc;
+      const aFruit = detecter(t, ALIMENTS.fruits);
+      const aNoix = detecter(t, ALIMENTS.noix);
+      const aBonGras = detecter(t, ALIMENTS.bons_gras);
+      const aRouge = detecterAll(t, ALIMENTS.feu_rouge);
+      const aAlcool = detecter(t, ALIMENTS.alcool);
+
+      // Sélection des règles selon le moment
+      if (!moment) moment = 'diner'; // défaut : règle classique
+      const rules = MOMENT_RULES[moment] || MOMENT_RULES.diner;
+      return rules({
+        t, aProteine, aProtLeger, aLegume, aFeculentComplet, aFeculentBlanc, aFeculent,
+        aFruit, aNoix, aBonGras, aRouge, aAlcool
+      });
     }
+
+    const MOMENT_RULES = {
+      // 🌅 DÉJEUNER (matin) — protéine + glucide complet, pas de légumes obligatoires
+      dejeuner: (a) => {
+        if (a.aRouge.length) {
+          return { classe: 'bad', titre: '🔴 Pas top pour le matin',
+            message: `Aliments à éviter au déjeuner : ${a.aRouge.join(', ')}.<br><br>
+              <strong>Un bon déjeuner Berthou c'est :</strong><br>
+              • 🥚 Protéine : œufs (2-3) · cottage cheese · jambon · fromage léger<br>
+              • 🍞 Glucide complet : 1 tranche pain complet · flocons d'avoine<br>
+              • 🍋 Boisson : eau + citron + gingembre · café/thé sans sucre<br>
+              • Pas de viennoiseries, pas de jus industriels`};
+        }
+        if (a.aProteine || a.aProtLeger) {
+          if (a.aFeculentComplet || a.aFruit) {
+            return { classe: 'ok', titre: '🟢 OK pour le matin',
+              message: `Protéine ✓ + glucide complet/fruit ✓<br>
+                Bon déjeuner pour démarrer la journée. ${a.t.match(/citron|gingembre/) ? '👍 Le rituel citron+gingembre est en place.' : '💡 Pense au rituel : eau + citron + gingembre au lever.'}`};
+          }
+          if (a.aFeculentBlanc) {
+            return { classe: 'warning', titre: '🟠 À adapter',
+              message: `Protéine ✓ mais le féculent est raffiné.<br><br>
+                Préfère du <strong>pain complet</strong> ou des <strong>flocons d'avoine</strong> plutôt que pain blanc/baguette/tresse.<br>
+                <em>Exception dominicale tresse familiale = OK une fois par semaine si compensée.</em>`};
+          }
+          return { classe: 'warning', titre: '🟠 À compléter',
+            message: `Protéine ✓ mais il manque un glucide complet pour tenir jusqu'au dîner.<br>
+              Ajoute : 1 tranche pain complet · ou flocons d'avoine · ou 1 fruit.`};
+        }
+        return { classe: 'bad', titre: '🔴 Pas adapté',
+          message: `Il manque la protéine — pilier d'un bon déjeuner pour éviter les fringales d'ici midi.<br><br>
+            <strong>Idées rapides :</strong><br>
+            • 2-3 œufs brouillés + 1 tranche pain complet<br>
+            • Cottage cheese + pain complet + miel<br>
+            • Gruyère + dinde + pain complet`};
+      },
+
+      // 🍎 COLLATION MATIN — fruit + petite protéine légère
+      collation_matin: (a) => {
+        if (a.aRouge.length) {
+          return { classe: 'bad', titre: '🔴 Pas top',
+            message: `À éviter : ${a.aRouge.join(', ')}.<br><br>Une collation idéale = 1 fruit + 10-15g noix (amandes, cajou).`};
+        }
+        if (a.aFruit && a.aNoix) {
+          return { classe: 'ok', titre: '🟢 OK',
+            message: `Fruit + noix ✓ — combinaison parfaite : IG bas + fibres + bons gras.`};
+        }
+        if (a.aFruit || (a.aProtLeger && !a.aFeculent)) {
+          return { classe: 'ok', titre: '🟢 OK (simple)',
+            message: `Bonne base. Pour optimiser tu peux ajouter une petite poignée de noix (~10-15g).`};
+        }
+        return { classe: 'warning', titre: '🟠 À adapter',
+          message: `Une collation matin doit rester légère : <strong>1 fruit + 10-15g noix</strong> suffit. Évite pain et féculents à ce moment.`};
+      },
+
+      // ☀️ DÎNER (midi) — règle classique Berthou : protéine + légume + féculent
+      diner: (a) => {
+        if (a.aRouge.length) {
+          return { classe: 'bad', titre: '🔴 Pas top',
+            message: `Aliments à limiter : ${a.aRouge.join(', ')}.<br><br>
+              <strong>Vise la règle Berthou :</strong><br>
+              • 🤚 Paume de protéine (poulet, poisson, œufs)<br>
+              • ✊ Poing de féculent <em>complet</em> (riz, quinoa)<br>
+              • 🫲 Légumes à volonté<br>
+              • 👍 Filet d'huile d'olive`};
+        }
+        const cats = (a.aProteine ? 1 : 0) + (a.aLegume ? 1 : 0) + (a.aFeculent ? 1 : 0);
+        if (cats === 3) {
+          const bonus = a.aFeculentBlanc ? '<br><em>💡 Privilégie complet (riz/pâtes complètes, quinoa).</em>' : '';
+          return { classe: 'ok', titre: '🟢 OK',
+            message: `Repas équilibré : protéine ✓ légume ✓ féculent ✓<br>
+              Dose : 🤚 paume, ✊ poing, 🫲 légumes à volonté.${bonus}`};
+        }
+        if (cats === 2) {
+          const manque = !a.aProteine ? 'protéine (poulet, poisson, œufs, cottage)' :
+                          !a.aLegume ? 'légume (salade, brocoli, courgette)' :
+                          'féculent complet (riz, quinoa, pain complet)';
+          return { classe: 'warning', titre: '🟠 À adapter',
+            message: `Bon début mais il manque : <strong>${manque}</strong>.`};
+        }
+        return { classe: 'bad', titre: '🔴 Déséquilibré',
+          message: `Il manque ${3 - cats} catégorie(s) Berthou.<br><br>
+            <strong>Idées équilibrées :</strong><br>
+            • Poulet + brocolis + quinoa<br>
+            • Saumon + asperges + riz complet<br>
+            • Œufs + ratatouille + pain complet`};
+      },
+
+      // 🍎 COLLATION APRÈS-MIDI — fruit + noix (similaire au matin)
+      collation_apres_midi: (a) => MOMENT_RULES.collation_matin(a),
+
+      // 💪 COLLATION POST-SÉANCE — protéine rapide + glucide rapide
+      collation_post_seance: (a) => {
+        if (a.aRouge.length) {
+          return { classe: 'bad', titre: '🔴 Pas top',
+            message: `À éviter post-séance : ${a.aRouge.join(', ')}.<br><br>Vise : <strong>protéine rapide + glucide</strong> dans les 30 min après l'effort.`};
+        }
+        const aProtRapide = a.aProtLeger || a.aProteine;
+        const aGlucideRapide = a.aFruit || detecter(a.t, ALIMENTS.feculents_complets) || detecter(a.t, ALIMENTS.feculents_blancs);
+        if (aProtRapide && aGlucideRapide) {
+          return { classe: 'ok', titre: '🟢 OK post-séance',
+            message: `Protéine + glucide ✓ — fenêtre anabolique respectée.<br>
+              Recharge musculaire et glycogénique optimale dans les 2h post-effort.`};
+        }
+        if (aProtRapide) {
+          return { classe: 'warning', titre: '🟠 À compléter',
+            message: `Protéine ✓ mais ajoute un glucide pour recharger le glycogène : 1 fruit ou 1 tranche pain complet.`};
+        }
+        return { classe: 'bad', titre: '🔴 Manque protéine',
+          message: `Sans protéine rapide post-séance, la reconstruction musculaire est compromise.<br><br>
+            <strong>Idées :</strong><br>
+            • Yaourt grec + fruit<br>
+            • Cottage cheese + pain complet<br>
+            • 2-3 tranches dinde + quelques amandes`};
+      },
+
+      // 🌙 SOUPER (soir) — protéine + légume, féculents réduits ou absents
+      souper: (a) => {
+        if (a.aRouge.length) {
+          return { classe: 'bad', titre: '🔴 Pas top pour le soir',
+            message: `Aliments à éviter le soir : ${a.aRouge.join(', ')}.<br><br>
+              <strong>Un bon souper = léger et digeste :</strong><br>
+              • 🤚 Protéine maigre (poisson, œufs, poulet)<br>
+              • 🫲 Légumes à volonté (vapeur, salade)<br>
+              • ❌ Féculents réduits (ou supprimés les jours de salle)`};
+        }
+        if (a.aProteine && a.aLegume) {
+          if (a.aFeculentComplet) {
+            return { classe: 'ok', titre: '🟢 OK',
+              message: `Protéine + légume + féculent complet (en petite quantité ½ poing).<br>
+                <em>💡 Les jours de salle, supprime le féculent du soir — récupération musculaire prioritaire.</em>`};
+          }
+          if (a.aFeculentBlanc) {
+            return { classe: 'warning', titre: '🟠 À adapter',
+              message: `Bonne base mais le féculent est raffiné. Préfère du complet ou supprime-le carrément le soir.`};
+          }
+          return { classe: 'ok', titre: '🟢 OK',
+            message: `Protéine + légumes sans féculent — idéal pour le soir, surtout après une séance de salle.<br>
+              Fenêtre anabolique respectée si dans les 2h post-effort.`};
+        }
+        if (a.aProteine || a.aLegume) {
+          const manque = !a.aProteine ? 'protéine (poisson, œufs, poulet)' : 'légumes (salade, vapeur)';
+          return { classe: 'warning', titre: '🟠 À adapter',
+            message: `Il manque : <strong>${manque}</strong>. Le soir, on vise léger mais protéiné.`};
+        }
+        return { classe: 'bad', titre: '🔴 Déséquilibré',
+          message: `Souper trop pauvre ou inadapté.<br><br>
+            <strong>Idées soir :</strong><br>
+            • Poisson + brocolis vapeur<br>
+            • Frittata + salade verte<br>
+            • Poulet + courgettes sautées`};
+      }
+    };
 
     // ============== RÈGLES D'ADAPTATION AUTO ==============
     function checkRulesAndShowAlerts() {
