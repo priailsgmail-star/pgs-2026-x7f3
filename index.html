@@ -1228,12 +1228,71 @@
           </div>
           <span class="jour-status" style="color:${accent};">${icon}</span>
         `;
-        if (j.programme_salle_id) {
-          card.style.cursor = 'pointer';
-          card.addEventListener('click', () => showSalleDetail(j.programme_salle_id));
-        }
+        // Tous les jours sont cliquables (V1.2)
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => showJourDetail(j.date));
         el.appendChild(card);
       });
+    }
+
+    function showJourDetail(date) {
+      const jour = getJourByDate(date);
+      if (!jour) return;
+      const el = document.getElementById('salle-detail');
+      el.style.display = 'block';
+      const repas = jour.repas || {};
+      const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
+      const repasHTML = order.filter(k => repas[k]).map(key => {
+        const r = repas[key];
+        const heure = r.heure || '';
+        const plat = r.plat || r.plat_famille || (r.options ? r.options.join(' / ') : '—');
+        let portionsHTML = '';
+        if (r.portions_lorenzo && r.portions_lorenzo.length) {
+          portionsHTML = '<div style="margin-top:6px; padding-top:6px; border-top:0.5px solid #F1EFE8;">' +
+            r.portions_lorenzo.map(p => '<p style="font-size:11px; margin:2px 0; color:#1a1a1a;">' + p.aliment + ' — <strong>' + p.portion + '</strong></p>').join('') +
+            '</div>';
+        }
+        let guideHTML = '';
+        if (r.guide && r.guide.length) {
+          guideHTML = '<ul style="margin:6px 0 0 18px; font-size:11px; line-height:1.6; color:#1a1a1a;">' +
+            r.guide.map(g => '<li>' + g + '</li>').join('') + '</ul>';
+        }
+        const noteHTML = r.note ? '<p style="font-size:11px; color:#5F5E5A; margin-top:6px; font-style:italic;">💡 ' + r.note + '</p>' : '';
+        return `
+          <div style="background:#fafaf7; border-radius:8px; padding:10px; margin-bottom:8px;">
+            <p style="font-size:11px; color:#D85A30; font-weight:500; text-transform:uppercase;">${labelRepas(key)} · ${heure}</p>
+            <p style="font-size:13px; margin-top:2px; font-weight:500;">${plat}</p>
+            ${portionsHTML}
+            ${guideHTML}
+            ${noteHTML}
+          </div>
+        `;
+      }).join('');
+      const activiteSub = jour.horaire_seance || jour.activite || jour.rituel || '';
+      const innovHTML = jour.innovation_jour ? `<div style="background:#EEEDFE; padding:8px; border-radius:8px; font-size:11px; color:#3C3489; margin-bottom:10px;">✨ ${jour.innovation_jour}</div>` : '';
+      const alerteHTML = jour.alerte_jour ? `<div style="background:#FAEEDA; padding:8px; border-radius:8px; font-size:11px; color:#633806; margin-bottom:10px; border-left:3px solid #BA7517;">⚠️ ${jour.alerte_jour}</div>` : '';
+      const salleBtn = jour.programme_salle_id ?
+        `<button class="btn btn-primary" id="show-salle-btn" style="margin-bottom:12px;">🏋️ Voir programme salle détaillé</button>` : '';
+      el.innerHTML = `
+        <div class="programme-detail">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <p style="font-size:14px; font-weight:500;">${jour.jour_semaine} ${new Date(jour.date + 'T00:00:00').getDate()} · ${jour.type}</p>
+            <button style="border:none; background:none; font-size:22px; cursor:pointer; color:#888780;" id="close-jour">✕</button>
+          </div>
+          <p class="card-sub" style="margin-bottom:12px;">${activiteSub}</p>
+          ${innovHTML}
+          ${alerteHTML}
+          ${salleBtn}
+          <p class="card-label" style="margin-bottom:8px;">Repas du jour</p>
+          ${repasHTML}
+        </div>
+      `;
+      document.getElementById('close-jour').addEventListener('click', () => {
+        el.style.display = 'none';
+      });
+      const sb = document.getElementById('show-salle-btn');
+      if (sb) sb.addEventListener('click', () => showSalleDetail(jour.programme_salle_id));
+      el.scrollIntoView({ behavior: 'smooth' });
     }
 
     function showSalleDetail(salleId) {
@@ -1314,15 +1373,60 @@
             </div>
           `;
         }
+        let guideHTML = '';
+        if (r.guide && r.guide.length) {
+          guideHTML = `
+            <div class="recipe-section">
+              <p class="recipe-section-title">Guide</p>
+              <ul style="margin-left:18px; font-size:12px; line-height:1.6;">
+                ${r.guide.map(g => '<li>' + g + '</li>').join('')}
+              </ul>
+            </div>
+          `;
+        }
         const noteHTML = r.note ? `<div class="berthou-ok">💡 ${r.note}</div>` : '';
         card.innerHTML = `
           <p class="recipe-time">${labelRepas(key).toUpperCase()} · ${r.heure || ''}</p>
           <p class="recipe-name">${plat}</p>
           ${portionsHTML}
+          ${guideHTML}
           ${noteHTML}
+          <button class="btn btn-primary" data-evaluate-repas="${key}" style="margin-top:10px; padding:9px; font-size:12px;">
+            🔍 Évaluer mon choix pour ce repas
+          </button>
         `;
         el.appendChild(card);
       });
+      // Brancher les boutons Évaluer
+      el.querySelectorAll('[data-evaluate-repas]').forEach(btn => {
+        btn.addEventListener('click', () => openChoixPersoForMeal(btn.dataset.evaluateRepas));
+      });
+    }
+
+    function openChoixPersoForMeal(moment) {
+      // Pré-remplir la modale avec contexte du moment
+      const placeholders = {
+        dejeuner: 'Ex: tartine pain complet + 2 œufs + tomate',
+        collation_matin: 'Ex: pomme + 10 amandes',
+        diner: 'Ex: pâtes carbonara + pain · ou salade quinoa poulet roquette',
+        collation_apres_midi: 'Ex: yaourt grec + fruit',
+        collation_post_seance: 'Ex: cottage cheese + banane',
+        souper: 'Ex: poisson grillé + brocolis · ou pizza moitié-moitié'
+      };
+      const titles = {
+        dejeuner: '🌅 Évaluer mon déjeuner',
+        collation_matin: '🍎 Évaluer ma collation matin',
+        diner: '☀️ Évaluer mon dîner (midi)',
+        collation_apres_midi: '🍎 Évaluer ma collation après-midi',
+        collation_post_seance: '💪 Évaluer ma collation post-séance',
+        souper: '🌙 Évaluer mon souper (soir)'
+      };
+      const input = document.getElementById('perso-input');
+      input.value = '';
+      input.placeholder = placeholders[moment] || 'Décris ton repas';
+      document.querySelector('#modal-choix-perso .modal-title').textContent = titles[moment] || '🍽 Évaluer mon repas';
+      document.getElementById('perso-verdict-zone').innerHTML = '';
+      openModal('modal-choix-perso');
     }
 
     // ============== ÉCRAN BILANS ==============
@@ -1659,7 +1763,10 @@
     // --- Choix perso niveau 1 ---
     function setupChoixPerso() {
       document.getElementById('open-choix-perso').addEventListener('click', () => {
-        document.getElementById('perso-input').value = '';
+        const input = document.getElementById('perso-input');
+        input.value = '';
+        input.placeholder = 'Ex : pâtes carbonara + 2 tranches pain · ou : salade poulet roquette tomate avec un peu de quinoa';
+        document.querySelector('#modal-choix-perso .modal-title').textContent = '🍽 Évaluer mon repas';
         document.getElementById('perso-verdict-zone').innerHTML = '';
         openModal('modal-choix-perso');
       });

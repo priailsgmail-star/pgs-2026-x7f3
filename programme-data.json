@@ -1,9 +1,9 @@
 {
   "meta": {
-    "version": "1.0.0",
-    "date_migration": "2026-05-17",
+    "version": "1.2.0",
+    "date_migration": "2026-05-18",
     "source": "Notion - Programme Santé Lorenzo",
-    "description": "Données initiales de la PWA : semaine 1 (11-17 mai 2026) migrée depuis Notion"
+    "description": "Données de la PWA : semaine 2 (18-24 mai 2026) migrée depuis Notion"
   },
 
   "profil": {
@@ -16,7 +16,7 @@
     "famille": 4,
     "preferences": {
       "style_cuisine": "italien, terroir, simple, frais",
-      "deroulement_jour": "déjeuner 7h, dîner ~12h30, souper ~19h",
+      "deroulement_jour": "déjeuner 7h-8h, dîner ~12h-12h30, souper ~18h30-19h",
       "coucher": "avant 23h30"
     },
     "regles_alimentaires": {
@@ -34,7 +34,7 @@
     "zone_2_min": 102,
     "zone_2_max": 119,
     "test_parole": "doit pouvoir tenir une conversation complète sans s'essouffler",
-    "duree_cible": "40 min"
+    "duree_cible": "40 min (cardio salle) ou 50 min (marche/vélo dehors)"
   },
 
   "regles_adaptation": {
@@ -62,582 +62,415 @@
   },
 
   "semaine": {
-    "numero": 1,
-    "dates": "2026-05-11 au 2026-05-17",
-    "exception": "Semaine de l'Ascension - Lun + Mer salle, Ven repos (pas Lun + Ven habituel)",
+    "numero": 2,
+    "dates": "2026-05-18 au 2026-05-24",
+    "exception": "Salle Lun + Jeu (au lieu de Lun+Ven) · 2 restos vendredi · week-end hors maison",
+    "innovations": [
+      {"nom": "🥜 Noix de cajou nature, non salées", "dose": "~15g (10 cajous)", "frequence": "2-3x semaine (mardi + samedi)", "benefice": "Mg + Zn + protéines végétales"},
+      {"nom": "🌰 Noix du Brésil", "dose": "2 maximum", "frequence": "1 seule fois semaine (jeudi)", "benefice": "Sélénium (thyroïde)", "alerte": "Ne JAMAIS dépasser 2 (toxicité)"}
+    ],
+    "strategie_2_restos_vendredi": "Déjeuner ultra-léger (cottage uniquement, pas de pain) · Midi et soir règle 1/3 stricte · Max 1 verre de vin sur toute la journée · Eau uniquement l'après-midi",
     "courses": [
       {
-        "id": "courses-1",
-        "nom": "Courses 1 - Samedi 9 mai",
-        "description": "Tout ce qui garde + frais pour lundi-mardi",
-        "categories": [
-          {
-            "nom": "Frais (utiliser lun-mar)",
-            "items": [
-              {"nom": "Poulet blanc", "quantite": "600g", "usage": "Lundi dîner"},
-              {"nom": "Saumon", "quantite": "4 pavés (~700g)", "usage": "Lundi souper"},
-              {"nom": "Cabillaud", "quantite": "600g", "usage": "Mardi dîner"},
-              {"nom": "Bœuf haché maigre", "quantite": "500g", "usage": "Congeler immédiatement → décongeler vendredi soir"}
-            ]
-          },
-          {
-            "nom": "Œufs & laitiers",
-            "items": [
-              {"nom": "Œufs", "quantite": "x18"},
-              {"nom": "Cottage cheese", "quantite": "2 x 200g"},
-              {"nom": "Gruyère", "quantite": "200g"},
-              {"nom": "Fromage pâte molle", "quantite": "150g"},
-              {"nom": "Mozzarella", "quantite": "2 boules"},
-              {"nom": "Parmesan râpé", "quantite": "100g"}
-            ]
-          },
-          {
-            "nom": "Légumes",
-            "items": [
-              {"nom": "Roquette", "quantite": "3 sachets"},
-              {"nom": "Courgettes", "quantite": "6"},
-              {"nom": "Brocoli", "quantite": "2 têtes"},
-              {"nom": "Tomates cerises", "quantite": "500g"},
-              {"nom": "Tomates", "quantite": "6"},
-              {"nom": "Carottes", "quantite": "6"},
-              {"nom": "Salade verte", "quantite": "2 sachets"},
-              {"nom": "Poireaux", "quantite": "2", "usage": "soupe"},
-              {"nom": "Céleri", "quantite": "2 branches", "usage": "soupe"},
-              {"nom": "Oignons", "quantite": "4"}
-            ]
-          },
-          {
-            "nom": "Sec & féculents",
-            "items": [
-              {"nom": "Riz basmati complet", "quantite": "1kg"},
-              {"nom": "Pâtes complètes", "quantite": "1kg"},
-              {"nom": "Lentilles vertes", "quantite": "250g", "note": "Lorenzo uniquement"},
-              {"nom": "Riz à risotto", "quantite": "400g"},
-              {"nom": "Pain complet", "quantite": "2 paquets"}
-            ]
-          },
-          {
-            "nom": "Fruits & aromates",
-            "items": [
-              {"nom": "Citrons", "quantite": "12"},
-              {"nom": "Gingembre frais", "quantite": "1 grosse racine"},
-              {"nom": "Pommes ou poires", "quantite": "6"},
-              {"nom": "Bananes", "quantite": "4"},
-              {"nom": "Ail", "quantite": "1 tête"},
-              {"nom": "Herbes fraîches", "quantite": "persil, basilic, thym"}
-            ]
-          },
-          {
-            "nom": "Épicerie",
-            "items": [
-              {"nom": "Tomates concassées", "quantite": "2 boîtes"},
-              {"nom": "Bouillon de légumes", "quantite": "2L"},
-              {"nom": "Amandes", "quantite": "200g"},
-              {"nom": "Noix", "quantite": "100g"},
-              {"nom": "Câpres", "quantite": "1 pot", "usage": "saumon lundi"}
-            ]
-          }
+        "id": "courses-sam17",
+        "nom": "Courses principales - Samedi 17 mai",
+        "items": [
+          {"nom": "Viande blanche (poulet, dinde)", "quantite": "~800g"},
+          {"nom": "Poisson (saumon ou cabillaud)", "quantite": "pour lundi souper"},
+          {"nom": "Légumes de base", "quantite": "courgettes, carottes, épinards, salade"},
+          {"nom": "Œufs", "quantite": "12"},
+          {"nom": "Cottage cheese", "quantite": ""},
+          {"nom": "Quinoa ou riz complet", "quantite": ""},
+          {"nom": "Noix de cajou nature non salées", "quantite": "150g (semaine)"}
         ]
       },
       {
-        "id": "courses-2",
-        "nom": "Courses 2 - Mercredi 13 mai",
-        "description": "En rentrant de la salle, frais pour jeu-dim",
+        "id": "courses-mer20",
+        "nom": "Réappro - Mercredi 20 mai (au retour de la marche)",
         "items": [
-          {"nom": "Dinde émincée", "quantite": "600g", "usage": "Mercredi dîner"},
-          {"nom": "Poulet cuisses", "quantite": "x4 (~800g)", "usage": "Mercredi souper"},
-          {"nom": "Asperges", "quantite": "1kg", "usage": "Vendredi dîner"},
-          {"nom": "Jambon de Parme", "quantite": "12 tranches", "usage": "Jeudi dîner"}
+          {"nom": "Poisson frais (cabillaud, lieu, dorade)", "quantite": ""},
+          {"nom": "Légumes frais de saison", "quantite": ""},
+          {"nom": "Fruits (pommes, poires, kiwis, baies)", "quantite": ""}
         ]
       }
     ],
     "jours": [
       {
-        "date": "2026-05-11",
+        "date": "2026-05-18",
         "jour_semaine": "Lundi",
         "type": "💪 Salle",
         "couleur": "#D85A30",
-        "horaire_seance": "~16h - 80 min",
+        "horaire_seance": "16h - 80 min",
+        "rituel": "⚖️ Se peser ce matin",
         "repas": {
           "dejeuner": {
-            "heure": "~7h",
+            "heure": "~8h",
             "rituel": "Eau + citron + gingembre",
-            "plat": "Œufs brouillés (2) + 1 tranche pain complet + noisette beurre",
-            "note": "Protéines au déjeuner = satiété durable, pas de fringale avant la séance"
+            "plat": "Œufs brouillés (3) OU cottage (3 cs) + 1 tranche pain complet + beurre léger"
+          },
+          "collation_matin": {
+            "heure": "~9h30",
+            "options": ["pomme", "poire", "kiwi", "baies"]
           },
           "diner": {
-            "heure": "avant 13h30",
-            "plat_famille": "Grande salade roquette + poulet grillé + riz basmati + vinaigrette citron-moutarde",
+            "heure": "~12h - avant 13h (séance 16h)",
+            "plat_famille": "Poulet ou dinde + légumes + quinoa",
             "portions_lorenzo": [
-              {"aliment": "🤚 Poulet grillé", "portion": "1 paume (~130-150g)"},
-              {"aliment": "✊ Riz basmati cuit", "portion": "1 poing (~80g)"},
-              {"aliment": "🫲 Roquette + tomates cerises", "portion": "à volonté"},
-              {"aliment": "👍 Huile d'olive + citron", "portion": "1 filet"}
+              {"aliment": "🤚 Poulet ou dinde", "portion": "1 paume (~150g)"},
+              {"aliment": "✊ Quinoa ou riz complet cuit", "portion": "½ poing (~40g)"},
+              {"aliment": "🫲 Légumes de saison", "portion": "à volonté"},
+              {"aliment": "👍 Huile olive + citron", "portion": "1 filet"}
             ],
-            "note": "Terminer avant 13h30 pour 2h30 de digestion avant séance 16h"
-          },
-          "collation_apres_midi": {
-            "heure": "14h-15h",
-            "regle": "Si dîner complet avant 13h30 → pas nécessaire. Si dîner léger ou avant 12h → fruit + 20-30g amandes ~14h30",
-            "interdit": "Pas de sirop (pic insulinique inhibe lipolyse)"
+            "note": "Dîner terminé avant 13h → pas de collation pré-salle, eau uniquement jusqu'à 16h"
           },
           "souper": {
-            "heure": "~19h",
-            "objectif": "Récupération musculaire - protéines prioritaires",
-            "plat_famille": "Saumon citron-câpres + brocoli vapeur + pâtes complètes",
+            "heure": "~18h30",
+            "contexte": "Fenêtre anabolique - dans les 2h post-séance",
+            "plat_famille": "Poisson blanc ou saumon + légumes vapeur",
             "portions_lorenzo": [
-              {"aliment": "🤚 Saumon", "portion": "1 paume + demi (~180g)"},
-              {"aliment": "✊ Pâtes complètes cuites", "portion": "1 poing (~80g)"},
-              {"aliment": "Brocoli", "portion": "à volonté"}
+              {"aliment": "🤚 Poisson (cabillaud, saumon, lieu)", "portion": "1 paume (~150g)"},
+              {"aliment": "🫲 Légumes vapeur", "portion": "à volonté"},
+              {"aliment": "👍 Huile olive + citron + herbes", "portion": "1 filet"}
             ],
-            "note": "Fenêtre anabolique : protéines dans 2h post-salle = reconstruction optimale. Oméga-3 = anti-inflammatoire"
+            "note": "❌ Pas de féculents ce soir — récupération musculaire prioritaire"
           }
         },
-        "programme_salle_id": "salle-lundi-11",
-        "realite_jour": {
-          "salle": "OK - cardio FC ~130 bpm (légèrement > Zone 2) - genou 0 douleur",
-          "diner": "Poulet + riz complet (basmati indispo)",
-          "souper": "Tarte au saumon + épinards (part 1/8) - plan saumon citron-câpres remplacé",
-          "bilan": {"energie": 8, "humeur": 8, "sommeil": 7}
-        }
+        "programme_salle_id": "salle-lundi-18"
       },
       {
-        "date": "2026-05-12",
+        "date": "2026-05-19",
         "jour_semaine": "Mardi",
         "type": "🚶 Actif léger",
         "couleur": "#1D9E75",
-        "activite": "Zone 2 - 50 min dehors",
+        "activite": "Marche ou vélo Zone 2 - 50 min",
+        "innovation_jour": "🥜 Noix de cajou aujourd'hui",
         "repas": {
           "dejeuner": {
-            "heure": "~7h",
+            "heure": "~7h-8h",
             "rituel": "Eau + citron + gingembre",
-            "plat": "Cottage cheese + 1 tranche pain complet + filet miel",
-            "note": "Cottage = protéines lentes + faible charge glycémique"
+            "plat": "Cottage cheese (3 cs) + 1 tranche pain complet"
+          },
+          "collation_matin": {
+            "heure": "~9h30",
+            "plat": "1 fruit + 15g noix de cajou (~10 cajous, non salées)",
+            "note": "Innovation semaine 2 — Mg + Zn + protéines végétales"
           },
           "diner": {
             "heure": "~12h30",
-            "plat_famille": "Cabillaud au four + courgettes sautées à l'ail + riz complet",
+            "plat_famille": "Salade composée protéinée",
             "portions_lorenzo": [
-              {"aliment": "🤚 Cabillaud", "portion": "1 paume + doigts (~150g)"},
-              {"aliment": "✊ Riz complet cuit", "portion": "1 poing (~80g)"},
-              {"aliment": "🫲 Courgettes sautées", "portion": "à volonté"}
-            ]
-          },
-          "activite_apres_midi": {
-            "heure": "14h-15h",
-            "options": ["Marche rapide nature/ville", "Vélo tranquille", "Natation"],
-            "duree": "50 min Zone 2 - FC cible 102-119 bpm"
+              {"aliment": "🤚 Protéines (œufs durs, thon, poulet froid, jambon)", "portion": "1 paume"},
+              {"aliment": "✊ Pois chiches ou lentilles cuites", "portion": "½ poing (~40g)"},
+              {"aliment": "🫲 Légumes variés (tomates, concombre, poivron, salade)", "portion": "à volonté"},
+              {"aliment": "👍 Vinaigrette huile olive + citron", "portion": "1 filet"}
+            ],
+            "note": "Jour actif léger → féculents réduits, légumineuses = fibres + protéines + IG bas"
           },
           "souper": {
             "heure": "~19h",
-            "plat_famille": "Frittata aux herbes et légumes (12 œufs pour 4) + salade verte",
+            "plat_famille": "Soupe + œuf",
             "portions_lorenzo": [
-              {"aliment": "🤚 Frittata", "portion": "2 parts généreuses"},
-              {"aliment": "🫲 Salade verte", "portion": "à volonté"},
+              {"aliment": "🫲 Soupe de légumes maison", "portion": "à volonté"},
+              {"aliment": "🥚 Œuf poché OU 2 cs cottage cheese", "portion": "1 œuf"},
               {"aliment": "Pain complet", "portion": "1 tranche"}
-            ],
-            "note": "Repas léger et digeste, pas de féculents lourds le soir"
-          }
-        },
-        "realite_jour": {
-          "activite": "Non réalisée Zone 2 (travail debout partiel au bureau)",
-          "diner": "Hors maison - poké bowl crevettes + quinoa + légumes + sauce teriyaki",
-          "souper": "Frittata (plan respecté)",
-          "bilan": {"energie": 8, "humeur": 9, "sommeil": 8}
-        }
-      },
-      {
-        "date": "2026-05-13",
-        "jour_semaine": "Mercredi",
-        "type": "💪 Salle",
-        "couleur": "#D85A30",
-        "horaire_seance": "14h - 80 min - Vélo Zone 2",
-        "repas": {
-          "dejeuner": {
-            "heure": "~7h",
-            "rituel": "Eau + citron + gingembre",
-            "plat": "Gruyère (~30g) + 2 tranches dinde + 1 tranche pain complet + noisette beurre",
-            "note": "Déjeuner compact et protéiné pour tenir jusqu'au dîner avant la salle"
-          },
-          "diner": {
-            "heure": "avant 11h30",
-            "plat_famille": "Dinde sautée aux carottes + riz (version allégée sans lentilles)",
-            "portions_lorenzo": [
-              {"aliment": "🤚 Dinde", "portion": "1 paume (~130g)"},
-              {"aliment": "✊ Riz basmati cuit", "portion": "½ poing (~50g)"},
-              {"aliment": "🫲 Carottes", "portion": "à volonté"}
-            ],
-            "note": "Terminé avant 11h30 - séance à 14h. Lentilles reportées à jeudi (digestion incompatible)"
-          },
-          "collation_post_seance": {
-            "heure": "~15h30",
-            "obligatoire": true,
-            "raison": "Souper sera léger (snack hors maison) - fenêtre anabolique cruciale",
-            "options": [
-              "Yaourt grec nature ~150g + 1 fruit",
-              "Cottage cheese ~150g + 1 tranche pain complet",
-              "2-3 tranches dinde roulées + quelques amandes"
             ]
-          },
-          "souper": {
-            "heure": "~18h",
-            "contexte": "Hors maison - 2h40 après séance",
-            "orientations_ok": ["salade repas protéinée", "poké bowl (sauce à part)", "sushi", "sandwich poulet/dinde", "wrap légumes + protéines"],
-            "a_eviter": ["fast food sucré", "pâtisserie", "plat uniquement glucides sans protéines"]
           }
-        },
-        "programme_salle_id": "salle-mercredi-13",
-        "realite_jour": {
-          "salle": "À 14h30 (pas 14h) - Zone 2 parfaite vélo 65% FC",
-          "diner": "Restes frittata + petite part riz complet + sauce tomate",
-          "collation": "Cottage + 3 tr dinde + 2 carrés chocolat noir",
-          "souper": "Burger sobre hors maison + 1 bière + 1dl coca",
-          "bilan": {"energie": 8, "humeur": 9, "sommeil": 8}
         }
       },
       {
-        "date": "2026-05-14",
-        "jour_semaine": "Jeudi",
-        "type": "🎉 Ascension - férié",
-        "couleur": "#FAC775",
-        "activite": "Optionnelle - balade 30-45 min Zone 2 si envie",
+        "date": "2026-05-20",
+        "jour_semaine": "Mercredi",
+        "type": "🚶 Marche Zone 2",
+        "couleur": "#1D9E75",
+        "activite": "Marche rapide Zone 2 - 50 min · FC 102-119 bpm",
+        "action_jour": "🛒 Courses réappro ce soir",
         "repas": {
           "dejeuner": {
-            "heure": "~8h",
+            "heure": "~7h-8h",
             "rituel": "Eau + citron + gingembre",
-            "plat": "Pain complet + fromage pâte molle + confiture"
+            "plat": "Gruyère (30g) + dinde (2 tr) + 1 tranche pain complet"
           },
           "collation_matin": {
             "heure": "~9h30",
-            "options": ["pomme", "poire", "kiwi", "orange", "baies"],
-            "eviter": ["banane mûre", "raisins"]
+            "plat": "Fruit de saison"
           },
           "diner": {
             "heure": "~12h30",
-            "plat_famille": "Cabillaud au four + légumes (Lorenzo ajoute ses lentilles cuites)",
+            "plat_famille": "Poisson frais + légumes vapeur + riz complet",
             "portions_lorenzo": [
-              {"aliment": "🤚 Cabillaud", "portion": "1 paume + doigts (~150g) - vapeur ou four 180° 15 min"},
-              {"aliment": "✊ Lentilles cuites (Lorenzo seul)", "portion": "1 poing (~80g cuit)"},
-              {"aliment": "🫲 Légumes au choix", "portion": "à volonté"}
+              {"aliment": "🤚 Poisson (cabillaud, lieu, dorade)", "portion": "1 paume (~150g)"},
+              {"aliment": "✊ Riz complet cuit", "portion": "½ poing (~40g)"},
+              {"aliment": "🫲 Légumes vapeur", "portion": "à volonté"},
+              {"aliment": "👍 Huile olive + citron + herbes", "portion": "1 filet"}
             ],
-            "note": "Cabillaud + lentilles = combinaison anti-inflammatoire excellente"
+            "note": "Acheter le poisson le matin · Cuisson vapeur ou four 180° 12-15 min"
           },
           "souper": {
             "heure": "~19h",
-            "contexte": "Cuisine maison - jour de repos = zéro féculents le soir",
-            "plat_famille": "Poulet entier rôti au four + carottes au beurre",
-            "preparation": "Four 200° 1h20 - herbes de Provence, ail, citron",
-            "portions_lorenzo": [
-              {"aliment": "🤚 Poulet (blanc préf)", "portion": "1 paume (~150g) sans peau"},
-              {"aliment": "🫲 Carottes bouillies + finition poêle au beurre", "portion": "à volonté"}
-            ],
-            "note": "Garder les restes du poulet → souper dimanche"
-          }
-        },
-        "realite_jour": {
-          "activite": "Balade 40' avec chien Zone 1-2 + 8000 pas",
-          "dejeuner": "Cottage + gruyère + pain noir + café",
-          "collation_16h": "6 carrés chocolat noir 70%",
-          "souper": "Poulet rôti + carottes beurre (asperges reportées vendredi)",
-          "alcool": 0,
-          "bilan": {"energie": 8, "humeur": 9, "sommeil": 7}
-        }
-      },
-      {
-        "date": "2026-05-15",
-        "jour_semaine": "Vendredi",
-        "type": "🌅 Pont - repos",
-        "couleur": "#FAC775",
-        "activite": "Repos ou balade optionnelle 30-45 min",
-        "action_importante": "Décongeler le bœuf haché au frigo - prêt pour bolognaise dimanche",
-        "repas": {
-          "dejeuner": {
-            "heure": "~8h",
-            "rituel": "Eau + citron + gingembre",
-            "plat": "Œufs brouillés (2) + 1 tranche pain complet + beurre"
-          },
-          "collation_matin": {
-            "heure": "~9h30",
-            "options": ["pomme", "poire", "kiwi", "orange", "baies"]
-          },
-          "diner": {
-            "heure": "~12h30",
-            "plat_famille": "Asperges blanches + jambon cru + betterave crue râpée",
-            "portions_lorenzo": [
-              {"aliment": "🫲 Asperges blanches", "portion": "à volonté"},
-              {"aliment": "🤚 Jambon cru", "portion": "2 tranches (~70g)"},
-              {"aliment": "👍 Copeaux parmesan", "portion": "1 pouce (~10g)"}
-            ],
-            "preparation_asperges": "Peler tête vers queue, cuire eau bouillante salée 10-12 min",
-            "note": "Asperges = prébiotiques + folates + très faible IG"
-          },
-          "souper": {
-            "heure": "~19h",
-            "contexte_initial": "Restaurant prévu - règle du 1/3",
-            "realite": "Souper maison salade tomate-mozzarella - pas de resto",
-            "portions_lorenzo": "Protéines + légumes 2/3 - féculents 1/3 max au resto"
-          }
-        },
-        "realite_jour": {
-          "diner": "Potage d'asperges + crème + 2 toasts (jambon cru, beurre, moutarde miel)",
-          "souper": "Salade tomate-mozzarella maison (4 tomates + 1.5 mozza + copeaux gruyère)",
-          "alcool": 0,
-          "boeuf_decongele": true,
-          "bilan": {"energie": 8, "humeur": 7, "sommeil": 8}
-        }
-      },
-      {
-        "date": "2026-05-16",
-        "jour_semaine": "Samedi",
-        "type": "🌅 Week-end",
-        "couleur": "#B4B2A9",
-        "activite": "Libre - pas d'obligation",
-        "repas": {
-          "dejeuner": {
-            "heure": "~8h-9h",
-            "rituel": "Eau + citron + gingembre",
-            "plat": "Cottage cheese + 1 tranche pain complet + miel"
-          },
-          "collation_matin": {
-            "heure": "~9h30",
-            "options": ["🍓 Fraises locales (saison mai)", "pomme", "poire", "kiwi", "baies"]
-          },
-          "diner": {
-            "heure": "~12h30",
-            "plat_famille": "Soupe de légumes maison + œufs durs + pain complet",
+            "plat_famille": "Souper léger - soupe de légumes",
             "portions_lorenzo": [
               {"aliment": "🫲 Soupe de légumes", "portion": "à volonté"},
-              {"aliment": "🤚 Œufs durs", "portion": "2 œufs"},
-              {"aliment": "Pain complet", "portion": "1 tranche"}
-            ],
-            "note": "Faire double quantité → reste pour souper dimanche"
-          },
-          "souper": {
-            "heure": "~19h",
-            "contexte_initial": "Restaurant prévu - règle du 1/3",
-            "realite": "Souper maison léger - salade légumes + cottage + 2 tr jambon"
+              {"aliment": "Pain complet", "portion": "1 tranche"},
+              {"aliment": "🥄 Fromage", "portion": "2 pouces (~30g)"}
+            ]
           }
-        },
-        "realite_jour": {
-          "apero": "2-3 feuilletés + fromage entre amis",
-          "souper": "Salade légumes + cottage + 2 tr jambon",
-          "alcool": 0,
-          "bilan": {"energie": 8, "humeur": 7, "sommeil": 7}
         }
       },
       {
-        "date": "2026-05-17",
-        "jour_semaine": "Dimanche",
-        "type": "😴 Repos + Bilan",
-        "couleur": "#534AB7",
-        "activite": "Aucune - recharge mentale et physique",
-        "rituel": "Coucher 30 min plus tôt ce soir",
+        "date": "2026-05-21",
+        "jour_semaine": "Jeudi",
+        "type": "💪 Salle",
+        "couleur": "#D85A30",
+        "horaire_seance": "16h - 80 min - 2e séance semaine",
+        "innovation_jour": "🌰 Noix du Brésil (max 2, jamais plus)",
         "repas": {
           "dejeuner": {
-            "heure": "~8h-9h",
+            "heure": "~8h",
             "rituel": "Eau + citron + gingembre",
-            "plat": "1-2 tranches tresse + beurre modéré + 2-3 cs cottage OU 1 œuf mollet",
-            "note": "Tresse = rituel famille - protéines à côté = équilibre glycémique - pâtes réduites ½ poing midi"
+            "plat": "Œufs brouillés (3) OU cottage (3 cs) + 1 tranche pain complet"
           },
           "collation_matin": {
             "heure": "~9h30",
-            "options": ["🍓 Fraises locales", "pomme", "poire", "kiwi", "baies"]
+            "plat": "1 fruit + 2 noix du Brésil — PAS PLUS",
+            "note": "⚠️ Max 2 noix · 1 seule fois cette semaine · Dépasser = toxicité sélénium"
           },
           "diner": {
-            "heure": "~12h30",
-            "plat_famille": "Pasta bolognaise légère maison",
-            "preparation": "Bœuf décongelé depuis vendredi - sauce mijote 40-45 min feu doux",
+            "heure": "~12h - avant 13h",
+            "plat_famille": "Viande blanche + lentilles (Lorenzo) + légumes",
             "portions_lorenzo": [
-              {"aliment": "✊ Pâtes complètes cuites", "portion": "½ poing (~40g) - réduit (tresse au déjeuner)"},
-              {"aliment": "🤚 Sauce bolognaise", "portion": "généreuse - protéines + légumes"},
-              {"aliment": "🫲 Salade verte", "portion": "à volonté"},
-              {"aliment": "👍 Parmesan", "portion": "1 pouce (~10g)"}
+              {"aliment": "🤚 Poulet ou dinde", "portion": "1 paume (~150g)"},
+              {"aliment": "✊ Lentilles cuites (Lorenzo seul)", "portion": "1 poing (~80g)"},
+              {"aliment": "🫲 Légumes de saison", "portion": "à volonté"},
+              {"aliment": "👍 Huile olive + herbes", "portion": "1 filet"}
+            ],
+            "note": "Dîner terminé avant 13h → pas de collation pré-salle"
+          },
+          "souper": {
+            "heure": "~18h30",
+            "contexte": "Fenêtre anabolique - dans les 2h post-séance",
+            "plat_famille": "Poulet/œufs + légumes",
+            "portions_lorenzo": [
+              {"aliment": "🤚 Poulet (restes) OU 3 œufs", "portion": "1 paume ou 3 œufs"},
+              {"aliment": "🫲 Légumes vapeur ou salade", "portion": "à volonté"},
+              {"aliment": "👍 Huile olive", "portion": "1 filet"}
+            ],
+            "note": "❌ Pas de féculents ce soir — récupération musculaire prioritaire"
+          }
+        },
+        "programme_salle_id": "salle-jeudi-21"
+      },
+      {
+        "date": "2026-05-22",
+        "jour_semaine": "Vendredi",
+        "type": "🍽️ 2 Restos",
+        "couleur": "#534AB7",
+        "activite": "Repos sportif",
+        "alerte_jour": "STRATÉGIE 2 RESTOS - déjeuner ultra-léger, eau l'après-midi, max 1 verre vin total",
+        "repas": {
+          "dejeuner": {
+            "heure": "~8h",
+            "rituel": "Eau + citron + gingembre",
+            "plat": "Cottage cheese uniquement (3-4 cs) - PAS DE PAIN",
+            "note": "💡 2 restos dans la journée = déjeuner minimal obligatoire pour rester dans l'enveloppe calorique"
+          },
+          "diner": {
+            "heure": "midi",
+            "contexte": "🍽️ Restaurant",
+            "regle": "Règle du 1/3 stricte",
+            "guide": [
+              "Priorité : viande grillée ou poisson + légumes = 2/3 assiette",
+              "Féculents : max 1/3 · éviter frites, gratins, sauces lourdes",
+              "Alcool : 1 verre max ICI - rien ce soir",
+              "1 grand verre d'eau avant de commander"
             ]
           },
           "souper": {
-            "heure": "~19h",
-            "plat": "Restes de poulet rôti + graines de courge",
+            "heure": "soir",
+            "contexte": "🍽️ Restaurant",
+            "regle": "Règle du 1/3 stricte",
+            "guide": [
+              "Protéines + légumes en priorité",
+              "Pas d'alcool si tu as bu à midi · eau ou eau gazeuse",
+              "Si pas bu à midi → max 1 verre",
+              "Éviter dessert sucré · café sans sucre si envie"
+            ]
+          }
+        },
+        "interdits_jour": ["Collation 9h30", "Activité physique", "Eau de robinet sans goût"]
+      },
+      {
+        "date": "2026-05-23",
+        "jour_semaine": "Samedi",
+        "type": "🌅 Hors maison",
+        "couleur": "#B4B2A9",
+        "activite": "Hors maison - profite du week-end",
+        "repas": {
+          "dejeuner": {
+            "heure": "selon lieu",
+            "rituel": "Eau + citron si possible",
+            "plat": "Priorité œufs + légumes ou fromage · éviter viennoiseries et jus industriels",
+            "options_buffet": "Œufs + fromage + salade de fruits (pas jus) + café"
+          },
+          "collation_matin": {
+            "heure": "si dispo",
+            "plat": "Fruit frais OU noix de cajou (~15g)"
+          },
+          "diner": {
+            "heure": "midi",
+            "regle": "Règle du 1/3",
+            "guide": [
+              "Protéines + légumes = 2/3 assiette",
+              "Féculents = max 1/3",
+              "Max 1 verre de vin",
+              "Profite du week-end — c'est fait pour ça"
+            ]
+          },
+          "souper": {
+            "heure": "soir",
+            "regle": "Règle du 1/3",
+            "guide": [
+              "Si tu as bu à midi → eau uniquement ce soir",
+              "Sinon → max 1 verre",
+              "Léger si possible — le corps récupère mieux"
+            ]
+          }
+        }
+      },
+      {
+        "date": "2026-05-24",
+        "jour_semaine": "Dimanche",
+        "type": "😴 Retour + Bilan",
+        "couleur": "#534AB7",
+        "activite": "Repos OU activité légère plaisir (padel, balade, vélo)",
+        "rituel": "Coucher 30 min plus tôt ce soir + remplir bilan semaine 2",
+        "repas": {
+          "dejeuner": {
+            "heure": "~8h-9h",
+            "rituel": "Eau + citron + gingembre (si à la maison)",
+            "plat": "1-2 tranches tresse + beurre modéré + 2-3 cs cottage OU 1 œuf mollet",
+            "note": "Si hors maison : protéines prioritaires · adapté selon lieu"
+          },
+          "collation_matin": {
+            "heure": "~9h30",
+            "options": ["fraises si dispo", "fruit de saison"]
+          },
+          "diner": {
+            "heure": "~12h30",
+            "plat_famille": "Pasta bolognaise légère (si maison) - tradition famille",
             "portions_lorenzo": [
-              {"aliment": "🤚 Poulet rôti (restes jeudi)", "portion": "1 paume (~150g) sans peau"},
-              {"aliment": "🌰 Graines de courge", "portion": "1 cs (~15g) - magnésium + zinc"},
-              {"aliment": "🫲 Légumes ou salade", "portion": "à volonté"}
+              {"aliment": "✊ Pâtes complètes cuites", "portion": "½ poing (~40g) - réduit (tresse matin)"},
+              {"aliment": "🤚 Sauce bolognaise", "portion": "généreuse"},
+              {"aliment": "🫲 Salade verte", "portion": "à volonté"},
+              {"aliment": "👍 Parmesan", "portion": "1 pouce (~10g)"}
             ],
-            "note": "Graines de courge favorisent sommeil et récupération"
+            "note": "Si hors maison : règle du 1/3"
+          },
+          "souper": {
+            "heure": "~19h",
+            "plat_famille": "Souper léger",
+            "portions_lorenzo": [
+              {"aliment": "🫲 Soupe de légumes OU salade", "portion": "à volonté"},
+              {"aliment": "🥄 Fromage", "portion": "2 pouces (~30g)"},
+              {"aliment": "Pain complet", "portion": "1 tranche"}
+            ]
           }
         },
         "bilan_jour_a_remplir": true
       }
     ],
     "programmes_salle": {
-      "salle-lundi-11": {
-        "date": "2026-05-11",
+      "salle-lundi-18": {
+        "date": "2026-05-18",
         "duree_totale": "80 min",
-        "horaire": "~16h",
-        "contrainte": "Genou-friendly - Zone 2",
+        "horaire": "16h",
+        "contrainte": "Genou droit - amplitude presse 30-70° max, arrêt si douleur >2/5",
         "echauffement": {
           "duree": "10 min",
-          "elements": ["Vélo elliptique très légère", "Rotations douces : épaules → hanches → genoux"]
+          "elements": ["Vélo stationnaire échauffement"]
         },
         "force": {
           "duree": "15 min",
-          "regle_genou": "Sur la presse, ne pas descendre sous 90°. Stop si douleur > 2/5",
+          "regle_genou": "Amplitude presse 30°-70° max, arrêt si douleur >2/5",
+          "consigne_progression": "Maintenir charges semaine 1 · augmenter jeudi seulement si lundi confortable",
           "exercices": [
-            {
-              "nom": "Hip thrust (fessiers)",
-              "series": 3,
-              "reps": 15,
-              "repos_sec": 60,
-              "charge_utilisee": "20 kg (assez facile)"
-            },
-            {
-              "nom": "Presse à cuisses (amplitude réduite)",
-              "series": 3,
-              "reps": 12,
-              "repos_sec": 60,
-              "charge_utilisee": "90 kg (effort moyen)"
-            },
-            {
-              "nom": "Rowing machine (dos)",
-              "series": 3,
-              "reps": 15,
-              "repos_sec": 60,
-              "charge_utilisee": "55 kg (moyen à facile)"
-            }
+            {"nom": "Hip thrust (fessiers)", "series": 3, "reps": 15, "charge_cible": "30 kg (sem 1)", "repos_sec": 60},
+            {"nom": "Presse à cuisses - amplitude 30°-70°", "series": 3, "reps": 12, "charge_cible": "95-100 kg (sem 1)", "repos_sec": 60},
+            {"nom": "Tirage horizontal (dos)", "series": 3, "reps": 15, "charge_cible": "62-65 kg (sem 1)", "repos_sec": 60}
           ]
         },
         "cardio_zone_2": {
           "duree": "40 min",
-          "machine": "elliptique",
-          "fc_cible": "102-119 bpm (60-70% FC max)",
-          "note": "Test parole - conversation complète sans s'essouffler. C'est cette intensité qui brûle les graisses"
-        },
-        "recuperation": {
-          "duree": "5 min",
-          "elements": ["Étirements doux : quadriceps, mollets, dos bas", "Douche froide 30 sec 🧊"]
-        },
-        "realite_seance": {
-          "ressenti": "très bon",
-          "douleur_genou": 0,
-          "remarques": "Régulier à 130 bpm, très facile - question : alternance pourrait améliorer perte poids ?"
-        }
-      },
-      "salle-mercredi-13": {
-        "date": "2026-05-13",
-        "duree_totale": "80 min",
-        "horaire": "~14h",
-        "contrainte": "Gonarthrose genou droit - Zone 2 vélo",
-        "echauffement": {
-          "duree": "10 min",
-          "elements": ["Vélo stationnaire très légère", "Mobilité douce - rotations genou sans charge"]
-        },
-        "force": {
-          "duree": "15 min",
-          "regle_genou": "Amplitude presse 30°-70° flexion, jamais au-delà. Quadriceps forts = protection articulaire",
-          "exercices": [
-            {
-              "nom": "Hip thrust (fessiers)",
-              "series": 3,
-              "reps": 15,
-              "charge_cible": "30 kg (était 20 facile)",
-              "charge_utilisee": "40 kg - limite lourd à la fin",
-              "repos_sec": 60
-            },
-            {
-              "nom": "Presse à cuisses - amplitude 30°-70°",
-              "series": 3,
-              "reps": 12,
-              "charge_cible": "95-100 kg (était 90 moyen)",
-              "charge_utilisee": "110 kg - un peu trop",
-              "repos_sec": 60
-            },
-            {
-              "nom": "Tirage horizontal (dos)",
-              "series": 3,
-              "reps": 15,
-              "charge_cible": "62-65 kg (était 55 facile)",
-              "charge_utilisee": "65 kg - limite lourd sur la durée",
-              "repos_sec": 60
-            }
-          ]
-        },
-        "cardio_zone_2": {
-          "duree": "40 min",
-          "machine": "🚴 Vélo stationnaire (priorité absolue - plan sagittal pur, zéro contrainte latérale genou)",
-          "resistance": "niveau 3-5 départ, ajuster pour tenir la zone",
+          "machine": "🚴 Vélo stationnaire (priorité - plan sagittal pur, zéro contrainte latérale genou)",
           "fc_cible": "102-119 bpm",
-          "mesure": "via montre, pas capteurs machine",
-          "fallback": "Si vélo occupé → elliptique résistance basse + montre poignet"
+          "mesure": "via montre, pas capteurs machine"
         },
         "recuperation": {
           "duree": "5 min",
           "elements": ["Étirements doux : quadriceps (debout), mollets, dos bas", "Douche froide 30 sec 🧊"]
+        }
+      },
+      "salle-jeudi-21": {
+        "date": "2026-05-21",
+        "duree_totale": "80 min",
+        "horaire": "16h",
+        "contrainte": "Genou droit - amplitude presse 30-70° max",
+        "echauffement": {
+          "duree": "10 min",
+          "elements": ["Vélo stationnaire échauffement"]
         },
-        "realite_seance": {
-          "ressenti": "très bon - bonne fatigue",
-          "douleur_genou": 0,
-          "fc_moyenne_bpm": 110,
-          "duree_cardio_min": 40,
-          "note": "Parfait Zone 2 mesuré Polar Vantage M"
+        "force": {
+          "duree": "15 min",
+          "regle_genou": "Amplitude presse 30°-70° max, arrêt si douleur >2/5",
+          "consigne_progression": "+2,5 kg sur Presse si lundi était confortable",
+          "exercices": [
+            {"nom": "Hip thrust (fessiers)", "series": 3, "reps": 15, "charge_cible": "30 kg (ou +)", "repos_sec": 60},
+            {"nom": "Presse à cuisses - amplitude 30°-70°", "series": 3, "reps": 12, "charge_cible": "+2,5 kg vs lundi si confortable", "repos_sec": 60},
+            {"nom": "Tirage horizontal (dos)", "series": 3, "reps": 15, "charge_cible": "62-65 kg", "repos_sec": 60}
+          ]
+        },
+        "cardio_zone_2": {
+          "duree": "40 min",
+          "machine": "🚴 Vélo stationnaire",
+          "fc_cible": "102-119 bpm",
+          "mesure": "via montre"
+        },
+        "recuperation": {
+          "duree": "5 min",
+          "elements": ["Étirements doux", "Douche froide 30 sec 🧊"]
         }
       }
     },
     "bilan_semaine": {
-      "poids_debut": 105,
+      "poids_debut": null,
       "poids_fin": null,
-      "energie_moyenne": 8,
-      "sommeil_moyen": 7.5,
-      "humeur_moyenne": 8.3,
-      "seances_realisees": "2/2 (Lun + Mer)",
-      "activite_legere": "Mar non faite - Jeu balade 40' avec chien + 8000 pas - Ven balade",
-      "alcool_total": "1 bière + 1dl coca (Mercredi soir hors maison)",
-      "ecarts_notables": [
-        "Mercredi : burger sobre + bière hors maison",
-        "Jeudi : 6 carrés chocolat noir 70%",
-        "Samedi : 2-3 feuilletés + fromage à l'apéro"
+      "points_de_vigilance": [
+        "2 séances salle (Lun + Jeu) - progression charges",
+        "Innovations alimentaires : noix de cajou (Mar+Sam) + 2 noix du Brésil max (Jeu)",
+        "Stratégie vendredi 2 restos - règle 1/3 stricte",
+        "Week-end hors maison samedi-dimanche : règle 1/3 partout"
       ],
-      "points_forts": [
-        "2 séances salle réalisées",
-        "Genou 0 douleur sur les 2 séances",
-        "Zone 2 parfaitement tenue mercredi (110 bpm)",
-        "Soupers maison priorisés (pas de resto sur le pont)"
-      ],
-      "axes_amelioration": [
-        "Activité Zone 2 mardi : à reprogrammer",
-        "Cohérence pages-discussion à améliorer semaine 2"
+      "objectifs": [
+        "Maintenir adhérence sportive (2/2 séances)",
+        "Tester les innovations alimentaires sans excès",
+        "Bien gérer le vendredi double-resto"
       ]
     }
   },
 
-  "recettes_referencees": {
-    "saumon-citron-capres": {
-      "nom": "Saumon citron-câpres + brocoli vapeur",
-      "url_notion": "https://www.notion.so/35c6a47bd3bc817b962dfb2484045060",
-      "portions": 4
-    },
-    "frittata-herbes-legumes": {
-      "nom": "Frittata aux herbes et légumes (12 œufs pour 4)",
-      "url_notion": "https://www.notion.so/35c6a47bd3bc81c6937eee17140ffd01",
-      "portions": 4
-    },
-    "lentilles-dinde-carottes": {
-      "nom": "Lentilles vertes + dinde-carottes",
-      "url_notion": "https://www.notion.so/35c6a47bd3bc811d9ecccbff82c1da24",
-      "portions": 4
-    },
-    "poulet-citron-herbes": {
-      "nom": "Poulet citron-herbes + asperges",
-      "url_notion": "https://www.notion.so/35c6a47bd3bc81a9a135f072b96fefdd",
-      "portions": 4
-    },
-    "soupe-legumes": {
-      "nom": "Soupe de légumes maison (poireaux, carottes, céleri, courgettes)",
-      "url_notion": "https://www.notion.so/35c6a47bd3bc817492cff9d6c208af10",
-      "portions": 4
-    },
-    "pasta-bolognaise-legere": {
-      "nom": "Pasta bolognaise légère",
-      "url_notion": "https://www.notion.so/35c6a47bd3bc81968c64e83088c90729",
-      "portions": 4
+  "historique_semaines": {
+    "semaine_1": {
+      "dates": "2026-05-11 au 2026-05-17",
+      "seances_realisees": "2/2 (Lun + Mer)",
+      "energie_moyenne": 8,
+      "sommeil_moyen": 7.5,
+      "ecarts_notables": ["Mercredi : burger sobre + bière hors maison", "Jeudi : 6 carrés chocolat noir 70%", "Samedi : 2-3 feuilletés + fromage à l'apéro"]
     }
+  },
+
+  "recettes_referencees": {
+    "saumon-citron-capres": {"nom": "Saumon citron-câpres + brocoli vapeur", "url_notion": "https://www.notion.so/35c6a47bd3bc817b962dfb2484045060"},
+    "frittata-herbes-legumes": {"nom": "Frittata aux herbes et légumes", "url_notion": "https://www.notion.so/35c6a47bd3bc81c6937eee17140ffd01"},
+    "soupe-legumes": {"nom": "Soupe de légumes maison", "url_notion": "https://www.notion.so/35c6a47bd3bc817492cff9d6c208af10"},
+    "pasta-bolognaise-legere": {"nom": "Pasta bolognaise légère", "url_notion": "https://www.notion.so/35c6a47bd3bc81968c64e83088c90729"}
   }
 }
