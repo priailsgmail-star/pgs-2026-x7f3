@@ -579,6 +579,98 @@
     .perso-verdict.warning { background: #FAEEDA; color: #633806; border-left: 4px solid #BA7517; }
     .perso-verdict.bad { background: #F7C1C1; color: #501313; border-left: 4px solid #A32D2D; }
     .perso-verdict strong { display: block; margin-bottom: 4px; }
+    /* Cible Berthou contextuelle — V1.4 */
+    .berthou-cible {
+      background: #FAF8F0;
+      border-left: 4px solid #D85A30;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      font-size: 11.5px;
+      line-height: 1.6;
+      color: #1a1a1a;
+    }
+    .berthou-cible-title {
+      display: block;
+      font-weight: 600;
+      color: #D85A30;
+      font-size: 12px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .berthou-cible-pdp {
+      display: block;
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 0.5px dashed #D85A30;
+      font-style: italic;
+      color: #6e3818;
+      font-size: 11px;
+    }
+    /* Repas remplacé — V1.5 */
+    .badge-modifie {
+      display: inline-block;
+      background: #EEEDFE;
+      color: #3C3489;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 6px;
+      letter-spacing: 0.3px;
+    }
+    .repas-origin-info {
+      font-size: 10.5px;
+      color: #5F5E5A;
+      font-style: italic;
+      margin-top: 4px;
+      padding: 4px 8px;
+      background: #FAFAF7;
+      border-left: 2px solid #B4B2A9;
+      border-radius: 4px;
+    }
+    .btn-restaurer {
+      background: transparent;
+      border: 1px solid #B4B2A9;
+      color: #5F5E5A;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      width: 100%;
+      margin-top: 8px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-restaurer:hover { background: #FAFAF7; }
+    /* Boutons après évaluation — V1.5 */
+    .verdict-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .btn-remplacer {
+      background: #1D9E75;
+      color: #fff;
+      border: none;
+      padding: 11px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-modifier {
+      background: transparent;
+      color: #534AB7;
+      border: 1px solid #534AB7;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      cursor: pointer;
+      font-family: inherit;
+    }
     /* Bouton ouvrir choix perso depuis écran Repas */
     .perso-btn {
       background: #534AB7;
@@ -920,6 +1012,8 @@
       </div>
       <p class="modal-sub">Décris ton repas (ce que tu vas manger). L'app te dit si c'est bon, à adapter, ou pas top.</p>
 
+      <div id="berthou-cible-zone"></div>
+
       <textarea class="perso-input" id="perso-input"
         placeholder="Ex : pâtes carbonara + 2 tranches pain · ou : salade poulet roquette tomate avec un peu de quinoa"></textarea>
 
@@ -1006,7 +1100,12 @@
     function loadState() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        try { return JSON.parse(raw); }
+        try {
+          const parsed = JSON.parse(raw);
+          // V1.5 — rétro-compatibilité : s'assurer que repasRemplaces existe
+          if (!parsed.repasRemplaces) parsed.repasRemplaces = {};
+          return parsed;
+        }
         catch (e) { console.error('Erreur parse state', e); }
       }
       return {
@@ -1014,11 +1113,49 @@
         ressenti: {},       // { "2026-05-17": { energie:7, humeur:3, genou:'ok' } }
         seances: {},        // { "2026-05-17": "fait" | "partiel" | "rate" }
         repas: {},          // { "2026-05-17_dejeuner": true }
+        repasRemplaces: {}, // V1.5 — { "2026-05-17_dejeuner": { plat:"...", date_remplacement:"..." } }
         notifications: { seance: true, poids: true, soir: true, hebdo: true }
       };
     }
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+    }
+
+    // ============== REMPLACEMENTS DE REPAS (V1.5) ==============
+    // Permet à Lorenzo de remplacer un repas planifié par un repas qu'il a évalué
+    // contextuellement et validé (verdict 🟢 OK). Stockage local, jour seul.
+    function getRepasEffectif(jour, key) {
+      const base = jour.repas && jour.repas[key];
+      if (!base) return null;
+      const repasKey = `${jour.date}_${key}`;
+      const remplacement = STATE.repasRemplaces && STATE.repasRemplaces[repasKey];
+      if (remplacement) {
+        return {
+          ...base,
+          _isReplaced: true,
+          _platOriginal: base.plat || base.plat_famille || (base.options ? base.options.join(' / ') : ''),
+          plat: remplacement.plat,
+          plat_famille: remplacement.plat,
+          _dateRemplacement: remplacement.date_remplacement
+        };
+      }
+      return base;
+    }
+    function remplacerRepas(date, moment, nouveauPlat) {
+      if (!STATE.repasRemplaces) STATE.repasRemplaces = {};
+      const repasKey = `${date}_${moment}`;
+      STATE.repasRemplaces[repasKey] = {
+        plat: nouveauPlat,
+        date_remplacement: todayISO()
+      };
+      saveState();
+    }
+    function restaurerRepas(date, moment) {
+      const repasKey = `${date}_${moment}`;
+      if (STATE.repasRemplaces && STATE.repasRemplaces[repasKey]) {
+        delete STATE.repasRemplaces[repasKey];
+        saveState();
+      }
     }
 
     // ============== UTILITAIRES ==============
@@ -1135,16 +1272,17 @@
       const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
       order.forEach(key => {
         if (!repas[key]) return;
-        const r = repas[key];
+        const r = getRepasEffectif(jour, key); // V1.5
         const heure = r.heure || '';
         const plat = r.plat || r.plat_famille || (r.options ? r.options.join(' / ') : '—');
         const repasKey = `${jour.date}_${key}`;
         const checked = STATE.repas[repasKey] === true;
+        const badgeHTML = r._isReplaced ? '<span class="badge-modifie">✏️ MODIFIÉ</span>' : '';
         const div = document.createElement('div');
         div.className = 'repas-item';
         div.innerHTML = `
           <div style="flex:1;">
-            <p class="repas-time">${heure} · ${labelRepas(key)}</p>
+            <p class="repas-time">${heure} · ${labelRepas(key)}${badgeHTML}</p>
             <p class="repas-name">${plat}</p>
           </div>
           <div class="repas-checkbox ${checked ? 'checked' : ''}" data-repas-key="${repasKey}">${checked ? '✓' : ''}</div>
@@ -1241,25 +1379,29 @@
       const repas = jour.repas || {};
       const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
       const repasHTML = order.filter(k => repas[k]).map(key => {
-        const r = repas[key];
+        const r = getRepasEffectif(jour, key); // V1.5
         const heure = r.heure || '';
         const plat = r.plat || r.plat_famille || (r.options ? r.options.join(' / ') : '—');
+        const isReplaced = !!r._isReplaced;
         let portionsHTML = '';
-        if (r.portions_lorenzo && r.portions_lorenzo.length) {
+        if (!isReplaced && r.portions_lorenzo && r.portions_lorenzo.length) {
           portionsHTML = '<div style="margin-top:6px; padding-top:6px; border-top:0.5px solid #F1EFE8;">' +
             r.portions_lorenzo.map(p => '<p style="font-size:11px; margin:2px 0; color:#1a1a1a;">' + p.aliment + ' — <strong>' + p.portion + '</strong></p>').join('') +
             '</div>';
         }
         let guideHTML = '';
-        if (r.guide && r.guide.length) {
+        if (!isReplaced && r.guide && r.guide.length) {
           guideHTML = '<ul style="margin:6px 0 0 18px; font-size:11px; line-height:1.6; color:#1a1a1a;">' +
             r.guide.map(g => '<li>' + g + '</li>').join('') + '</ul>';
         }
-        const noteHTML = r.note ? '<p style="font-size:11px; color:#5F5E5A; margin-top:6px; font-style:italic;">💡 ' + r.note + '</p>' : '';
+        const noteHTML = (!isReplaced && r.note) ? '<p style="font-size:11px; color:#5F5E5A; margin-top:6px; font-style:italic;">💡 ' + r.note + '</p>' : '';
+        const badgeHTML = isReplaced ? '<span class="badge-modifie">✏️ MODIFIÉ</span>' : '';
+        const originHTML = isReplaced ? `<div class="repas-origin-info" style="margin-top:6px;">ℹ️ Initialement prévu : ${r._platOriginal || '—'}</div>` : '';
         return `
           <div style="background:#fafaf7; border-radius:8px; padding:10px; margin-bottom:8px;">
-            <p style="font-size:11px; color:#D85A30; font-weight:500; text-transform:uppercase;">${labelRepas(key)} · ${heure}</p>
+            <p style="font-size:11px; color:#D85A30; font-weight:500; text-transform:uppercase;">${labelRepas(key)} · ${heure}${badgeHTML}</p>
             <p style="font-size:13px; margin-top:2px; font-weight:500;">${plat}</p>
+            ${originHTML}
             ${portionsHTML}
             ${guideHTML}
             ${noteHTML}
@@ -1358,12 +1500,14 @@
       const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
       order.forEach(key => {
         if (!jour.repas[key]) return;
-        const r = jour.repas[key];
+        const r = getRepasEffectif(jour, key); // V1.5
         const card = document.createElement('div');
         card.className = 'recipe-card';
         const plat = r.plat || r.plat_famille || (r.options ? r.options.join(' / ') : '—');
+        const isReplaced = !!r._isReplaced;
+        // V1.5 — si remplacé : badge + masquer portions Berthou et guide (ne correspondent plus)
         let portionsHTML = '';
-        if (r.portions_lorenzo && r.portions_lorenzo.length) {
+        if (!isReplaced && r.portions_lorenzo && r.portions_lorenzo.length) {
           portionsHTML = `
             <div class="recipe-section">
               <p class="recipe-section-title">Portions (Berthou)</p>
@@ -1372,7 +1516,7 @@
           `;
         }
         let guideHTML = '';
-        if (r.guide && r.guide.length) {
+        if (!isReplaced && r.guide && r.guide.length) {
           guideHTML = `
             <div class="recipe-section">
               <p class="recipe-section-title">Guide</p>
@@ -1382,22 +1526,40 @@
             </div>
           `;
         }
-        const noteHTML = r.note ? `<div class="berthou-ok">💡 ${r.note}</div>` : '';
+        const noteHTML = (!isReplaced && r.note) ? `<div class="berthou-ok">💡 ${r.note}</div>` : '';
+        const badgeHTML = isReplaced ? '<span class="badge-modifie">✏️ MODIFIÉ</span>' : '';
+        const originHTML = isReplaced ? `<div class="repas-origin-info">ℹ️ Initialement prévu : ${r._platOriginal || '—'}</div>` : '';
+        const restaurerHTML = isReplaced
+          ? `<button class="btn-restaurer" data-restaurer-repas="${key}">↩️ Restaurer le plan initial</button>`
+          : '';
         card.innerHTML = `
-          <p class="recipe-time">${labelRepas(key).toUpperCase()} · ${r.heure || ''}</p>
+          <p class="recipe-time">${labelRepas(key).toUpperCase()} · ${r.heure || ''}${badgeHTML}</p>
           <p class="recipe-name">${plat}</p>
+          ${originHTML}
           ${portionsHTML}
           ${guideHTML}
           ${noteHTML}
           <button class="btn btn-primary" data-evaluate-repas="${key}" style="margin-top:10px; padding:9px; font-size:12px;">
             🔍 Évaluer mon choix pour ce repas
           </button>
+          ${restaurerHTML}
         `;
         el.appendChild(card);
       });
       // Brancher les boutons Évaluer
       el.querySelectorAll('[data-evaluate-repas]').forEach(btn => {
         btn.addEventListener('click', () => openChoixPersoForMeal(btn.dataset.evaluateRepas));
+      });
+      // V1.5 — brancher les boutons Restaurer
+      el.querySelectorAll('[data-restaurer-repas]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const moment = btn.dataset.restaurerRepas;
+          if (confirm('Restaurer le repas prévu à l\'origine pour ce moment ?')) {
+            restaurerRepas(jour.date, moment);
+            renderRepas();
+            renderAujourdhui();
+          }
+        });
       });
     }
 
@@ -1424,8 +1586,85 @@
       input.placeholder = placeholders[moment] || 'Décris ton repas';
       document.querySelector('#modal-choix-perso .modal-title').textContent = titles[moment] || '🍽 Évaluer mon repas';
       document.getElementById('perso-verdict-zone').innerHTML = '';
+      // V1.4 : afficher la cible Berthou contextuelle (avec axe perte de poids)
+      const cibleZone = document.getElementById('berthou-cible-zone');
+      const cible = BERTHOU_CIBLES[moment];
+      if (cibleZone && cible) {
+        cibleZone.innerHTML = `
+          <div class="berthou-cible">
+            <span class="berthou-cible-title">🎯 Cible Berthou — ${cible.label}</span>
+            ${cible.contenu}
+            <span class="berthou-cible-pdp">🎯 Perte de poids (105 → 92 kg) : ${cible.perte_poids}</span>
+          </div>
+        `;
+      } else if (cibleZone) {
+        cibleZone.innerHTML = '';
+      }
       openModal('modal-choix-perso');
     }
+
+    // ============== CIBLES BERTHOU CONTEXTUELLES (V1.4) ==============
+    // Affichées dans la modale d'évaluation — repères de portions + axe perte de poids
+    // Méthode Berthou : paume = protéine · poing = féculent · main = légumes · pouce = gras
+    const BERTHOU_CIBLES = {
+      dejeuner: {
+        label: 'Déjeuner (matin)',
+        contenu: `
+          🥚 <strong>Protéine</strong> = 1 paume (≈ 2-3 œufs · 60g cottage · 1 tranche jambon)<br>
+          🍞 <strong>Glucide complet</strong> = 1 poing (≈ 1 tranche pain complet · 40g flocons d'avoine)<br>
+          🥑 <strong>Gras</strong> = 1 pouce (huile olive · 5g beurre)<br>
+          🍋 <strong>Rituel matin</strong> : eau + jus citron frais + gingembre râpé
+        `,
+        perte_poids: 'Protéine en priorité (satiété longue durée). Pas de viennoiserie ni jus industriel — pic insulinique = stockage. 1 tranche pain max, pas 2.'
+      },
+      collation_matin: {
+        label: 'Collation matin',
+        contenu: `
+          🍎 <strong>Fruit</strong> = 1 unité (pomme, poire, baies — éviter banane mûre et raisin)<br>
+          🥜 <strong>Noix</strong> = petite poignée (≈ 10-15g · 1 demi-poing)<br>
+          ❌ Pas de pain ni féculent à ce moment
+        `,
+        perte_poids: 'Strict 10-15g de noix (très caloriques). Choisir fruit à IG bas. Si pas faim → la sauter, ce n\'est pas obligatoire.'
+      },
+      diner: {
+        label: 'Dîner (midi)',
+        contenu: `
+          🍗 <strong>Protéine</strong> = 1 paume (≈ 120-150g viande / poisson / 3 œufs)<br>
+          🥦 <strong>Légumes</strong> = 2 mains (à volonté, crus ou cuits)<br>
+          🌾 <strong>Féculent complet</strong> = 1 poing (≈ 80g cru ou 1 grosse louche cuit)<br>
+          🥑 <strong>Gras</strong> = 1 pouce (huile olive crue de préférence)
+        `,
+        perte_poids: 'Règle assiette 1/3 - 1/3 - 1/3. Protéine d\'abord dans l\'assiette, légumes en volume, féculent contrôlé. Au resto : règle 1/3 (protéine+légume 2/3, féculent 1/3 max).'
+      },
+      collation_apres_midi: {
+        label: 'Collation après-midi',
+        contenu: `
+          🍎 <strong>Fruit</strong> = 1 unité (pomme, poire, baies)<br>
+          🥜 <strong>Noix</strong> = petite poignée (≈ 10-15g)<br>
+          ❌ Pas de pain ni féculent · ❌ pas de sirop (pic insulinique)
+        `,
+        perte_poids: 'Coupe-faim avant souper. Strict 10-15g de noix. Si pas faim → sauter. Préférer pomme + 10 amandes plutôt que barre céréales.'
+      },
+      collation_post_seance: {
+        label: 'Collation post-séance',
+        contenu: `
+          🥛 <strong>Protéine rapide</strong> = 1 paume (cottage 100g · yaourt grec 150g · 3-4 tranches dinde)<br>
+          🍌 <strong>Glucide rapide</strong> = 1 fruit OU 1 tranche pain complet<br>
+          ⏱️ <strong>Fenêtre anabolique</strong> : dans les 30 min après la séance
+        `,
+        perte_poids: 'Seul moment où un glucide rapide est OK — reconstitution glycogène musculaire. Protéine indispensable pour la récup. Si pas de séance ce jour → règle collation normale.'
+      },
+      souper: {
+        label: 'Souper (soir)',
+        contenu: `
+          🐟 <strong>Protéine</strong> = 1 paume (poisson, œufs, volaille blanche — léger et digeste)<br>
+          🥗 <strong>Légumes</strong> = 2 mains (cuits vapeur ou crus)<br>
+          🌾 <strong>Féculent</strong> = ⚠️ <strong>réduit ou supprimé</strong> les jours de salle (sinon ½ poing max)<br>
+          🥑 <strong>Gras</strong> = 1 pouce
+        `,
+        perte_poids: 'Levier #1 perte de poids. Léger, digeste, fini ≥ 3h avant coucher. Pas de pain, pas de pâtes. Si jour Option D (séance annulée) → féculent encore plus réduit (1/5).'
+      }
+    };
 
     // ============== ÉCRAN BILANS ==============
     function renderBilans() {
@@ -1771,6 +2010,9 @@
           input.placeholder = 'Décris ton repas';
           document.querySelector('#modal-choix-perso .modal-title').textContent = '🍽 Évaluer mon repas';
           document.getElementById('perso-verdict-zone').innerHTML = '';
+          // V1.4 : pas de cible Berthou si moment non précisé (entrée legacy)
+          const cz = document.getElementById('berthou-cible-zone');
+          if (cz) cz.innerHTML = '';
           openModal('modal-choix-perso');
         });
       }
@@ -1779,12 +2021,54 @@
         if (!txt) return;
         const verdict = evaluateRepasPerso(txt, currentEvaluateMoment);
         const zone = document.getElementById('perso-verdict-zone');
+        // V1.5 — boutons conditionnels selon le verdict
+        let actionsHTML = '';
+        if (currentEvaluateMoment) {
+          if (verdict.classe === 'ok') {
+            actionsHTML = `
+              <div class="verdict-actions">
+                <button class="btn-remplacer" id="btn-remplacer-repas">✓ Remplacer le repas prévu pour aujourd'hui</button>
+              </div>
+            `;
+          } else {
+            actionsHTML = `
+              <div class="verdict-actions">
+                <button class="btn-modifier" id="btn-modifier-choix">✏️ Modifier mon choix</button>
+              </div>
+            `;
+          }
+        }
         zone.innerHTML = `
           <div class="perso-verdict ${verdict.classe}">
             <strong>${verdict.titre}</strong>
             ${verdict.message}
           </div>
+          ${actionsHTML}
         `;
+        // Brancher les actions
+        const btnRempl = document.getElementById('btn-remplacer-repas');
+        if (btnRempl) {
+          btnRempl.addEventListener('click', () => {
+            const jour = jourCourant();
+            if (!jour || !currentEvaluateMoment) return;
+            remplacerRepas(jour.date, currentEvaluateMoment, txt);
+            closeModal('modal-choix-perso');
+            renderRepas();
+            renderAujourdhui();
+          });
+        }
+        const btnMod = document.getElementById('btn-modifier-choix');
+        if (btnMod) {
+          btnMod.addEventListener('click', () => {
+            // Vide le verdict, garde le texte saisi dans la textarea pour itération
+            zone.innerHTML = '';
+            const input = document.getElementById('perso-input');
+            input.focus();
+            // Place le curseur en fin de texte
+            const len = input.value.length;
+            input.setSelectionRange(len, len);
+          });
+        }
       });
     }
     // ============== ÉVALUATION CONTEXTUELLE PAR MOMENT (V1.2) ==============
