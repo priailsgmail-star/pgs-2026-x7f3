@@ -671,6 +671,159 @@
       cursor: pointer;
       font-family: inherit;
     }
+    /* === V1.7 Tableau de bord d'évolution === */
+    .range-toggle {
+      display: flex;
+      gap: 4px;
+      background: #F1EFE8;
+      padding: 3px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+    }
+    .range-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 8px 4px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-family: inherit;
+      color: #5F5E5A;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .range-btn.active {
+      background: #fff;
+      color: #1a1a1a;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .score-forme-card {
+      background: linear-gradient(135deg, #D85A30 0%, #BA4520 100%);
+      color: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .score-forme-mini {
+      background: linear-gradient(135deg, #D85A30 0%, #BA4520 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .score-forme-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+    .score-forme-big {
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 1;
+      margin: 6px 0;
+    }
+    .score-forme-mini .score-forme-big {
+      font-size: 32px;
+      margin: 2px 0 0 0;
+    }
+    .score-forme-sub {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .score-forme-unit {
+      font-size: 14px;
+      opacity: 0.8;
+      font-weight: 400;
+    }
+    .multi-courbe-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #5F5E5A;
+    }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .compare-kpi {
+      background: #FAFAF7;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .compare-kpi-label {
+      font-size: 10.5px;
+      color: #5F5E5A;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .compare-kpi-value {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 4px 0 2px;
+    }
+    .compare-kpi-delta {
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .delta-positive { color: #1D9E75; }
+    .delta-negative { color: #A32D2D; }
+    .delta-neutral { color: #888780; }
+    .insights-list, .recos-list {
+      list-style: none;
+      padding: 0;
+      margin: 6px 0 0 0;
+    }
+    .insight-item, .reco-item {
+      padding: 9px 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      line-height: 1.5;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .insight-positif { background: #E1F5EE; border-left: 3px solid #1D9E75; color: #085041; }
+    .insight-alerte  { background: #FAEEDA; border-left: 3px solid #BA7517; color: #633806; }
+    .insight-info    { background: #EEEDFE; border-left: 3px solid #534AB7; color: #3C3489; }
+    .reco-item {
+      background: #FAF8F0;
+      border-left: 3px solid #D85A30;
+      color: #1a1a1a;
+    }
+    .reco-axe {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #D85A30;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .bilan-empty {
+      font-size: 12px;
+      color: #888780;
+      font-style: italic;
+      text-align: center;
+      padding: 14px;
+    }
     /* Bouton ouvrir choix perso depuis écran Repas */
     .perso-btn {
       background: #534AB7;
@@ -759,6 +912,15 @@
       </div>
     </div>
 
+    <!-- Score Forme du jour (V1.7 B1) -->
+    <div class="score-forme-mini" id="score-forme-mini" style="display:none;">
+      <div>
+        <p class="score-forme-label">Ta forme aujourd'hui</p>
+        <p class="score-forme-big"><span id="score-forme-jour">—</span><span class="score-forme-unit">/10</span></p>
+      </div>
+      <p class="score-forme-sub" id="score-forme-jour-sub" style="max-width:140px; text-align:right;">—</p>
+    </div>
+
     <!-- Saisie poids du matin -->
     <div class="weigh-input-card">
       <label for="poids-input">⚖️ Poids du matin (kg)</label>
@@ -830,35 +992,65 @@
     <div id="repas-fiches"><!-- généré dynamiquement --></div>
   </section>
 
-  <!-- ÉCRAN BILANS -->
+  <!-- ÉCRAN BILANS — V1.7 Tableau de bord d'évolution -->
   <section class="screen" id="screen-bilans">
     <h2 style="font-size: 18px; font-weight: 500; margin: 14px 0;">Bilans & progression</h2>
 
+    <!-- Toggle range temporel (B2) -->
+    <div class="range-toggle" id="range-toggle">
+      <button class="range-btn" data-range="jour">Jour</button>
+      <button class="range-btn active" data-range="semaine">Semaine</button>
+      <button class="range-btn" data-range="mois">Mois</button>
+      <button class="range-btn" data-range="tout">Tout</button>
+    </div>
+
+    <!-- Score Forme moyen (B1) -->
+    <div class="score-forme-card" id="score-forme-card">
+      <p class="score-forme-label">Score Forme — moyenne période</p>
+      <p class="score-forme-big"><span id="score-forme-moy">—</span><span class="score-forme-unit">/10</span></p>
+      <p class="score-forme-sub" id="score-forme-sub">—</p>
+    </div>
+
+    <!-- Courbes multi-métriques (B3) -->
     <div class="chart-card">
       <div class="chart-header">
-        <p class="chart-title">Poids — Semaine 1</p>
-        <p class="chart-sub" id="poids-trend">—</p>
+        <p class="chart-title" id="chart-titre">Évolution — Semaine</p>
+        <p class="chart-sub" id="chart-sub">—</p>
       </div>
       <svg viewBox="0 0 300 100" style="width: 100%; height: 100px;">
-        <polyline id="poids-line" points="" fill="none" stroke="#D85A30" stroke-width="2.5" stroke-linecap="round"/>
         <line x1="0" y1="90" x2="300" y2="90" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="2,2"/>
+        <polyline id="courbe-poids"   points="" fill="none" stroke="#D85A30" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline id="courbe-score"   points="" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+        <polyline id="courbe-energie" points="" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-dasharray="3,2"/>
       </svg>
-      <p style="font-size: 10px; color: #5F5E5A; text-align: center; margin-top: 4px;" id="poids-axis">J0 → Aujourd'hui</p>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <p class="stat-label">Énergie moy.</p>
-        <p class="stat-value" style="color:#1D9E75;"><span id="energie-moy">—</span><span class="stat-unit">/10</span></p>
-      </div>
-      <div class="stat-card">
-        <p class="stat-label">Adhérence séances</p>
-        <p class="stat-value" style="color:#1D9E75;"><span id="adherence">—</span><span class="stat-unit">%</span></p>
+      <div class="multi-courbe-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#D85A30;"></span>Poids</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#1D9E75;"></span>Score Forme</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#534AB7;"></span>Énergie</span>
       </div>
     </div>
 
+    <!-- Comparatif périodes (B6) -->
+    <div class="card" id="compare-card">
+      <p class="card-label">Comparatif vs période précédente</p>
+      <div class="compare-grid" id="compare-grid"><!-- généré dynamiquement --></div>
+    </div>
+
+    <!-- Insights (B4) -->
+    <div class="card" id="insights-card">
+      <p class="card-label">🔎 Constats</p>
+      <ul class="insights-list" id="insights-list"><!-- généré dynamiquement --></ul>
+    </div>
+
+    <!-- Recommandations (B5) -->
+    <div class="card" id="recos-card">
+      <p class="card-label">🎯 Recommandations</p>
+      <ul class="recos-list" id="recos-list"><!-- généré dynamiquement --></ul>
+    </div>
+
+    <!-- Bilan migré Notion (conservé en bas) -->
     <div class="card">
-      <p class="card-label">Bilan semaine 1</p>
+      <p class="card-label">Bilan migré (Notion)</p>
       <div id="bilan-semaine-content"><!-- généré dynamiquement --></div>
     </div>
   </section>
@@ -1089,6 +1281,7 @@
       setupSeanceRateeModal();
       setupRepasRateModal();
       setupChoixPerso();
+      setupBilansToggle(); // V1.7 — toggle range temporel
       // Règles d'adaptation auto
       checkRulesAndShowAlerts();
 
@@ -1249,6 +1442,9 @@
         }
       }
 
+      // Score Forme du jour (V1.7 B1)
+      renderScoreFormeMini(jour);
+
       // Aperçu 3 prochains jours
       renderPreview3Days();
 
@@ -1263,6 +1459,26 @@
       const tipIdx = new Date().getDate() % tips.length;
       document.getElementById('tip-text').textContent = tips[tipIdx];
       document.getElementById('tip-box').style.display = 'block';
+    }
+
+    function renderScoreFormeMini(jour) {
+      const card = document.getElementById('score-forme-mini');
+      const big = document.getElementById('score-forme-jour');
+      const sub = document.getElementById('score-forme-jour-sub');
+      if (!card) return;
+      const score = calculerScoreForme(jour.date, jour);
+      if (score == null) {
+        card.style.display = 'none';
+        return;
+      }
+      card.style.display = 'flex';
+      big.textContent = score.toFixed(1).replace('.', ',');
+      let label = 'Saisis tes ressentis';
+      if (score >= 8) label = '🔥 Excellente forme';
+      else if (score >= 6.5) label = '👍 Bonne forme';
+      else if (score >= 5) label = '🟠 Forme moyenne, écoute-toi';
+      else label = '⚠️ Forme basse, prévois récup';
+      sub.textContent = label;
     }
 
     function renderRepasList(jour) {
@@ -1666,48 +1882,251 @@
       }
     };
 
-    // ============== ÉCRAN BILANS ==============
-    function renderBilans() {
-      // Courbe poids
-      const jours = DATA.semaine.jours;
-      const points = [];
-      const poidsDepart = DATA.profil.poids_depart_kg || 105;
-      jours.forEach((j, i) => {
-        const p = STATE.poids[j.date] || (i === 0 ? poidsDepart : null);
-        if (p) points.push({ x: i, y: p });
-      });
-      if (points.length >= 2) {
-        const xs = points.map(p => p.x);
-        const ys = points.map(p => p.y);
-        const xMin = 0, xMax = jours.length - 1;
-        const yMin = Math.min(...ys) - 0.5;
-        const yMax = Math.max(...ys) + 0.5;
-        const norm = points.map(p => {
-          const nx = ((p.x - xMin) / (xMax - xMin)) * 300;
-          const ny = 90 - ((p.y - yMin) / (yMax - yMin)) * 80;
-          return `${nx.toFixed(1)},${ny.toFixed(1)}`;
-        });
-        document.getElementById('poids-line').setAttribute('points', norm.join(' '));
-        const delta = ys[ys.length - 1] - ys[0];
-        document.getElementById('poids-trend').textContent =
-          `${ys[0].toFixed(1).replace('.', ',')} → ${ys[ys.length - 1].toFixed(1).replace('.', ',')} kg (${delta >= 0 ? '+' : ''}${delta.toFixed(1).replace('.', ',')} kg)`;
-      } else {
-        document.getElementById('poids-trend').textContent = 'Pas assez de données';
+    // ============== HELPERS BILANS V1.7 ==============
+    // Barème Score Forme : énergie 40% + humeur 20% + genou 20% + adhérence séance 10% + adhérence repas 10%
+    function calculerScoreForme(date, jour) {
+      const ressenti = STATE.ressenti[date];
+      if (!ressenti || ressenti.energie == null) return null;
+      const sEnergie = (ressenti.energie / 10) * 4;
+      const humeurMap = { 1: 0, 2: 0.5, 3: 1, 4: 1.5, 5: 2 };
+      const sHumeur = humeurMap[ressenti.humeur] != null ? humeurMap[ressenti.humeur] : 1;
+      const genouMap = { ok: 2, sensible: 1, douloureux: 0 };
+      const sGenou = genouMap[ressenti.genou] != null ? genouMap[ressenti.genou] : 1;
+      // Adhérence séance
+      let sSeance = 0.5;
+      if (jour) {
+        const aSeance = jour.type && (jour.type.includes('Salle') || jour.type.includes('Actif'));
+        if (aSeance) {
+          const statut = STATE.seances[date];
+          sSeance = statut === 'fait' ? 1 : (statut === 'partiel' ? 0.5 : 0);
+        } else {
+          sSeance = 1;
+        }
       }
+      // Adhérence repas
+      let sRepas = 0.5;
+      if (jour && jour.repas) {
+        const repasKeys = Object.keys(jour.repas);
+        if (repasKeys.length) {
+          const coches = repasKeys.filter(k => STATE.repas[`${date}_${k}`] === true).length;
+          sRepas = coches / repasKeys.length;
+        }
+      }
+      return Math.round((sEnergie + sHumeur + sGenou + sSeance + sRepas) * 10) / 10;
+    }
 
-      // Énergie moyenne
-      const energies = Object.values(STATE.ressenti).map(r => r.energie).filter(e => e != null);
-      const energieMoy = energies.length ? (energies.reduce((a, b) => a + b, 0) / energies.length).toFixed(1).replace('.', ',') : '—';
-      document.getElementById('energie-moy').textContent = energieMoy;
+    function isoFromDate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${dd}`;
+    }
 
-      // Adhérence séances
-      const seancesPlaniees = jours.filter(j => j.type.includes('Salle') || j.type.includes('Actif')).length;
-      const seancesFaites = jours.filter(j => (j.type.includes('Salle') || j.type.includes('Actif')) && STATE.seances[j.date] === 'fait').length;
-      const adh = seancesPlaniees ? Math.round((seancesFaites / seancesPlaniees) * 100) : 0;
-      document.getElementById('adherence').textContent = adh;
+    function getBilanDates(range) {
+      const today = new Date();
+      const dates = [];
+      if (range === 'jour') {
+        dates.push(todayISO());
+      } else if (range === 'semaine') {
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date(today);
+          d.setDate(d.getDate() - i);
+          dates.push(isoFromDate(d));
+        }
+      } else if (range === 'mois') {
+        for (let i = 29; i >= 0; i--) {
+          const d = new Date(today);
+          d.setDate(d.getDate() - i);
+          dates.push(isoFromDate(d));
+        }
+      } else { // tout
+        const allDates = new Set();
+        Object.keys(STATE.poids || {}).forEach(d => allDates.add(d));
+        Object.keys(STATE.ressenti || {}).forEach(d => allDates.add(d));
+        Object.keys(STATE.seances || {}).forEach(d => allDates.add(d));
+        dates.push(...Array.from(allDates).sort());
+      }
+      return dates;
+    }
 
-      // Bilan semaine
-      const bilan = DATA.semaine.bilan_semaine || {};
+    function getBilanDatesPrecedent(range) {
+      const today = new Date();
+      const dates = [];
+      if (range === 'jour') {
+        const d = new Date(today); d.setDate(d.getDate() - 1);
+        dates.push(isoFromDate(d));
+      } else if (range === 'semaine') {
+        for (let i = 13; i >= 7; i--) {
+          const d = new Date(today); d.setDate(d.getDate() - i);
+          dates.push(isoFromDate(d));
+        }
+      } else if (range === 'mois') {
+        for (let i = 59; i >= 30; i--) {
+          const d = new Date(today); d.setDate(d.getDate() - i);
+          dates.push(isoFromDate(d));
+        }
+      }
+      return dates;
+    }
+
+    function getJourPourDate(date) {
+      return (DATA.semaine && DATA.semaine.jours)
+        ? DATA.semaine.jours.find(j => j.date === date)
+        : null;
+    }
+
+    function getMoyennesPeriode(dates) {
+      const poids = [];
+      const energies = [];
+      const scores = [];
+      let seancesPlan = 0, seancesFaites = 0;
+      let genouOK = 0, genouTotal = 0;
+      let repasRemplaces = 0;
+      dates.forEach(d => {
+        if (STATE.poids[d] != null) poids.push(STATE.poids[d]);
+        const ressenti = STATE.ressenti[d];
+        if (ressenti) {
+          if (ressenti.energie != null) energies.push(ressenti.energie);
+          if (ressenti.genou) { genouTotal++; if (ressenti.genou === 'ok') genouOK++; }
+        }
+        const jour = getJourPourDate(d);
+        const sc = calculerScoreForme(d, jour);
+        if (sc != null) scores.push(sc);
+        if (jour && jour.type && (jour.type.includes('Salle') || jour.type.includes('Actif'))) {
+          seancesPlan++;
+          if (STATE.seances[d] === 'fait') seancesFaites++;
+        }
+      });
+      // Repas remplacés sur la période
+      Object.keys(STATE.repasRemplaces || {}).forEach(k => {
+        const date = k.split('_')[0];
+        if (dates.includes(date)) repasRemplaces++;
+      });
+      const moy = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
+      return {
+        poidsDebut: poids[0] || null,
+        poidsFin: poids[poids.length - 1] || null,
+        poidsMoy: moy(poids),
+        energieMoy: moy(energies),
+        scoreFormeMoy: moy(scores),
+        adherenceSeances: seancesPlan ? (seancesFaites / seancesPlan) * 100 : null,
+        seancesFaites, seancesPlan,
+        pctJoursGenouOK: genouTotal ? (genouOK / genouTotal) * 100 : null,
+        repasRemplaces,
+        nbJoursAvecData: scores.length
+      };
+    }
+
+    function getValeursParJour(dates) {
+      return dates.map(d => {
+        const jour = getJourPourDate(d);
+        return {
+          date: d,
+          poids: STATE.poids[d] != null ? STATE.poids[d] : null,
+          energie: STATE.ressenti[d] && STATE.ressenti[d].energie != null ? STATE.ressenti[d].energie : null,
+          scoreForme: calculerScoreForme(d, jour)
+        };
+      });
+    }
+
+    function genererInsights(dates) {
+      const insights = [];
+      const valeurs = getValeursParJour(dates);
+      const m = getMoyennesPeriode(dates);
+      // 1. Tendance énergie
+      const energies = valeurs.map(v => v.energie).filter(e => e != null);
+      if (energies.length >= 3) {
+        const mid = Math.floor(energies.length / 2);
+        const moyDeb = energies.slice(0, mid).reduce((a,b) => a+b, 0) / mid;
+        const moyFin = energies.slice(mid).reduce((a,b) => a+b, 0) / (energies.length - mid);
+        const diff = moyFin - moyDeb;
+        if (diff > 0.5) insights.push({ type: 'positif', text: `Énergie en hausse (${moyDeb.toFixed(1)} → ${moyFin.toFixed(1)}) sur la période` });
+        else if (diff < -0.5) insights.push({ type: 'alerte', text: `Énergie en baisse (${moyDeb.toFixed(1)} → ${moyFin.toFixed(1)}) — à surveiller` });
+      }
+      // 2. Adhérence séances
+      if (m.seancesPlan >= 2) {
+        const pct = Math.round(m.adherenceSeances);
+        if (pct >= 80) insights.push({ type: 'positif', text: `Adhérence séances : ${m.seancesFaites}/${m.seancesPlan} (${pct} %) — excellent rythme` });
+        else if (m.seancesPlan - m.seancesFaites >= 2) insights.push({ type: 'alerte', text: `${m.seancesPlan - m.seancesFaites} séances ratées — pattern à surveiller` });
+      }
+      // 3. Évolution poids
+      if (m.poidsDebut != null && m.poidsFin != null) {
+        const dPoids = m.poidsFin - m.poidsDebut;
+        if (dPoids < -0.3) insights.push({ type: 'positif', text: `Poids ${m.poidsDebut.toFixed(1).replace('.', ',')} → ${m.poidsFin.toFixed(1).replace('.', ',')} kg (${dPoids.toFixed(1).replace('.', ',')} kg) — tendance saine` });
+        else if (Math.abs(dPoids) < 0.2 && dates.length >= 5) insights.push({ type: 'info', text: `Poids stable sur la période (normal après perte rapide ou signal de réajustement)` });
+        else if (dPoids > 0.5) insights.push({ type: 'alerte', text: `Poids en hausse de +${dPoids.toFixed(1).replace('.', ',')} kg — vérifier souper et féculents` });
+      }
+      // 4. Genou
+      if (m.pctJoursGenouOK != null) {
+        if (m.pctJoursGenouOK < 50) insights.push({ type: 'alerte', text: `Genou : seulement ${Math.round(m.pctJoursGenouOK)} % de jours OK — squats lourds bloqués` });
+        else if (m.pctJoursGenouOK >= 80) insights.push({ type: 'positif', text: `Genou : ${Math.round(m.pctJoursGenouOK)} % de jours OK — bonne phase` });
+      }
+      // 5. Repas remplacés
+      if (m.repasRemplaces > 0) {
+        insights.push({ type: 'info', text: `${m.repasRemplaces} repas remplacé(s) via Choix Perso cette période` });
+      }
+      // Tri : alertes > positifs > info ; max 4
+      const order = { alerte: 0, positif: 1, info: 2 };
+      insights.sort((a, b) => order[a.type] - order[b.type]);
+      return insights.slice(0, 4);
+    }
+
+    function genererRecommandations(dates) {
+      const recos = [];
+      const m = getMoyennesPeriode(dates);
+      const valeurs = getValeursParJour(dates);
+      // 🧬 Biologique — énergie basse
+      const energiesBasses = valeurs.filter(v => v.energie != null && v.energie <= 5);
+      if (energiesBasses.length >= 3) recos.push({ axe: '🧬 Biologique', priorite: 1, text: 'Forcer 1 jour de récupération + vérifier hydratation et qualité du sommeil (coucher avant 23h30)' });
+      // 🧬 Biologique — plateau poids
+      if (m.poidsDebut != null && m.poidsFin != null && Math.abs(m.poidsFin - m.poidsDebut) < 0.2 && dates.length >= 5) recos.push({ axe: '🧬 Biologique', priorite: 2, text: 'Plateau détecté — tester 1 jour de recharge alimentaire ou intensifier cardio Zone 2' });
+      // 📅 Hebdomadaire — séances ratées
+      if (m.seancesPlan && (m.seancesPlan - m.seancesFaites) >= 2) recos.push({ axe: '📅 Hebdomadaire', priorite: 1, text: 'Réorganiser la semaine prochaine — prévoir séance de rattrapage sur jour libre' });
+      // 💪 Sportif — genou
+      if (m.pctJoursGenouOK != null && m.pctJoursGenouOK < 50) recos.push({ axe: '💪 Sportif', priorite: 1, text: 'Presse 30°-70° uniquement, pas de squats lourds 7 jours. Privilégier vélo Zone 2' });
+      // 📈 Mensuel — trajectoire vers 92 kg
+      if (m.poidsFin != null) {
+        const restant = m.poidsFin - 92;
+        if (restant <= 5 && restant > 0) recos.push({ axe: '📈 Mensuel', priorite: 2, text: `Plus que ${restant.toFixed(1).replace('.', ',')} kg pour atteindre 92 kg — maintenir le cap, ne pas accélérer` });
+        else if (m.poidsDebut != null && m.poidsFin - m.poidsDebut < -0.3) recos.push({ axe: '📈 Mensuel', priorite: 3, text: 'Sur la bonne trajectoire vers 92 kg — continuer sans changement' });
+      }
+      // 🛡️ Prévention — humeur basse
+      const humeursBases = dates.filter(d => STATE.ressenti[d] && STATE.ressenti[d].humeur != null && STATE.ressenti[d].humeur <= 2);
+      if (humeursBases.length >= 3) recos.push({ axe: '🛡️ Prévention', priorite: 1, text: 'Humeur basse plusieurs jours — prévoir pause récup + activité plaisir (marche extérieur, musique)' });
+      // ⏰ Horaire — souper tardif (placeholder simple : si plus d'un souper coché et qu'on est en vue large)
+      // (à enrichir quand on aura les timestamps de coche)
+      // Tri par priorité ; max 3
+      recos.sort((a, b) => a.priorite - b.priorite);
+      return recos.slice(0, 3);
+    }
+
+    // ============== ÉCRAN BILANS ==============
+    let currentBilanRange = 'semaine'; // jour | semaine | mois | tout
+    const RANGE_LABELS = { jour: 'Aujourd\'hui', semaine: '7 derniers jours', mois: '30 derniers jours', tout: 'Tout l\'historique' };
+
+    function setBilanRange(range) {
+      currentBilanRange = range;
+      document.querySelectorAll('#range-toggle .range-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.range === range);
+      });
+      renderBilans();
+    }
+
+    function renderBilans() {
+      const dates = getBilanDates(currentBilanRange);
+      const m = getMoyennesPeriode(dates);
+      // B1 — Score Forme moyen
+      renderScoreFormeBilans(m, dates);
+      // B3 — Courbes multi-métriques
+      renderMultiCourbes(dates);
+      // B6 — Comparatif périodes
+      renderComparatifPeriodes(m, dates);
+      // B4 — Insights
+      renderInsights(dates);
+      // B5 — Recommandations
+      renderRecommandations(dates);
+      // Bilan semaine statique (migré Notion) — conservé
+      const bilan = (DATA.semaine && DATA.semaine.bilan_semaine) || {};
       const el = document.getElementById('bilan-semaine-content');
       el.innerHTML = `
         <p style="font-size:12px; line-height:1.6;">
@@ -1720,6 +2139,144 @@
       `;
     }
 
+    function renderScoreFormeBilans(m, dates) {
+      const moyEl = document.getElementById('score-forme-moy');
+      const subEl = document.getElementById('score-forme-sub');
+      const titre = RANGE_LABELS[currentBilanRange] || '';
+      if (m.scoreFormeMoy != null) {
+        moyEl.textContent = m.scoreFormeMoy.toFixed(1).replace('.', ',');
+        subEl.textContent = `${titre} · ${m.nbJoursAvecData} jour${m.nbJoursAvecData > 1 ? 's' : ''} avec données`;
+      } else {
+        moyEl.textContent = '—';
+        subEl.textContent = `${titre} · Saisis énergie/humeur/genou pour calculer le score`;
+      }
+    }
+
+    function renderMultiCourbes(dates) {
+      const valeurs = getValeursParJour(dates);
+      const polyline = (id, normPoints) => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('points', normPoints.join(' '));
+      };
+      const W = 300, H = 100, padTop = 5, padBot = 90;
+      const nbX = dates.length;
+      const xAt = i => nbX > 1 ? (i / (nbX - 1)) * W : W / 2;
+      // Normalisation par série
+      const ptsPoids = [], ptsScore = [], ptsEnergie = [];
+      const poids = valeurs.map(v => v.poids).filter(p => p != null);
+      const scores = valeurs.map(v => v.scoreForme).filter(s => s != null);
+      const energies = valeurs.map(v => v.energie).filter(e => e != null);
+      if (poids.length >= 2) {
+        const yMin = Math.min(...poids) - 0.5, yMax = Math.max(...poids) + 0.5;
+        valeurs.forEach((v, i) => {
+          if (v.poids != null) ptsPoids.push(`${xAt(i).toFixed(1)},${(padBot - ((v.poids - yMin) / (yMax - yMin)) * (padBot - padTop)).toFixed(1)}`);
+        });
+      }
+      if (scores.length >= 2) {
+        valeurs.forEach((v, i) => {
+          if (v.scoreForme != null) ptsScore.push(`${xAt(i).toFixed(1)},${(padBot - (v.scoreForme / 10) * (padBot - padTop)).toFixed(1)}`);
+        });
+      }
+      if (energies.length >= 2) {
+        valeurs.forEach((v, i) => {
+          if (v.energie != null) ptsEnergie.push(`${xAt(i).toFixed(1)},${(padBot - (v.energie / 10) * (padBot - padTop)).toFixed(1)}`);
+        });
+      }
+      polyline('courbe-poids', ptsPoids);
+      polyline('courbe-score', ptsScore);
+      polyline('courbe-energie', ptsEnergie);
+      // Titre et sous-titre du chart
+      const titreEl = document.getElementById('chart-titre');
+      const subEl = document.getElementById('chart-sub');
+      if (titreEl) titreEl.textContent = 'Évolution — ' + (RANGE_LABELS[currentBilanRange] || '');
+      if (subEl) {
+        if (poids.length >= 2) {
+          const d = poids[poids.length - 1] - poids[0];
+          subEl.textContent = `Poids ${poids[0].toFixed(1).replace('.', ',')} → ${poids[poids.length - 1].toFixed(1).replace('.', ',')} kg (${d >= 0 ? '+' : ''}${d.toFixed(1).replace('.', ',')} kg)`;
+        } else {
+          subEl.textContent = 'Données insuffisantes pour les courbes';
+        }
+      }
+    }
+
+    function renderComparatifPeriodes(mActuel, dates) {
+      const el = document.getElementById('compare-grid');
+      const cardEl = document.getElementById('compare-card');
+      if (currentBilanRange === 'tout' || currentBilanRange === 'jour') {
+        // Pas de comparatif sur "Tout" ou "Jour seul"
+        cardEl.style.display = 'none';
+        return;
+      }
+      cardEl.style.display = 'block';
+      const datesPrec = getBilanDatesPrecedent(currentBilanRange);
+      const mPrec = getMoyennesPeriode(datesPrec);
+      if (!mPrec.nbJoursAvecData) {
+        el.innerHTML = '<p class="bilan-empty">Pas de données sur la période précédente pour comparer.</p>';
+        return;
+      }
+      const fmt = (v, unit) => v == null ? '—' : v.toFixed(1).replace('.', ',') + (unit || '');
+      const deltaHTML = (actuel, prec, unit, betterDirection) => {
+        if (actuel == null || prec == null) return '<span class="delta-neutral">—</span>';
+        const d = actuel - prec;
+        const cls = (d === 0) ? 'delta-neutral'
+          : (betterDirection === 'up' ? (d > 0 ? 'delta-positive' : 'delta-negative') : (d < 0 ? 'delta-positive' : 'delta-negative'));
+        const arrow = d > 0 ? '↑' : (d < 0 ? '↓' : '→');
+        return `<span class="${cls}">${arrow} ${d >= 0 ? '+' : ''}${d.toFixed(1).replace('.', ',')}${unit || ''}</span>`;
+      };
+      const kpis = [
+        { lab: 'Poids fin', val: fmt(mActuel.poidsFin, ' kg'), delta: deltaHTML(mActuel.poidsFin, mPrec.poidsFin, ' kg', 'down') },
+        { lab: 'Score Forme', val: fmt(mActuel.scoreFormeMoy, '/10'), delta: deltaHTML(mActuel.scoreFormeMoy, mPrec.scoreFormeMoy, '', 'up') },
+        { lab: 'Énergie moy.', val: fmt(mActuel.energieMoy, '/10'), delta: deltaHTML(mActuel.energieMoy, mPrec.energieMoy, '', 'up') },
+        { lab: 'Adh. séances', val: mActuel.adherenceSeances != null ? Math.round(mActuel.adherenceSeances) + ' %' : '—', delta: deltaHTML(mActuel.adherenceSeances, mPrec.adherenceSeances, ' pts', 'up') },
+        { lab: 'Genou OK', val: mActuel.pctJoursGenouOK != null ? Math.round(mActuel.pctJoursGenouOK) + ' %' : '—', delta: deltaHTML(mActuel.pctJoursGenouOK, mPrec.pctJoursGenouOK, ' pts', 'up') }
+      ];
+      el.innerHTML = kpis.map(k => `
+        <div class="compare-kpi">
+          <p class="compare-kpi-label">${k.lab}</p>
+          <p class="compare-kpi-value">${k.val}</p>
+          <p class="compare-kpi-delta">${k.delta}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderInsights(dates) {
+      const list = document.getElementById('insights-list');
+      const insights = genererInsights(dates);
+      if (!insights.length) {
+        list.innerHTML = '<li class="bilan-empty">Pas encore assez de données pour des constats sur cette période.</li>';
+        return;
+      }
+      const icon = { positif: '✅', alerte: '⚠️', info: 'ℹ️' };
+      list.innerHTML = insights.map(i => `
+        <li class="insight-item insight-${i.type}">
+          <span>${icon[i.type]}</span><span>${i.text}</span>
+        </li>
+      `).join('');
+    }
+
+    function renderRecommandations(dates) {
+      const list = document.getElementById('recos-list');
+      const recos = genererRecommandations(dates);
+      if (!recos.length) {
+        list.innerHTML = '<li class="bilan-empty">Aucune recommandation à signaler — continue comme ça.</li>';
+        return;
+      }
+      list.innerHTML = recos.map(r => `
+        <li class="reco-item">
+          <div>
+            <span class="reco-axe">${r.axe}</span>
+            <span>${r.text}</span>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function setupBilansToggle() {
+      document.querySelectorAll('#range-toggle .range-btn').forEach(b => {
+        b.addEventListener('click', () => setBilanRange(b.dataset.range));
+      });
+    }
+
     // ============== INTERACTIONS ==============
     function setupNavigation() {
       document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1730,6 +2287,10 @@
           document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           window.scrollTo(0, 0);
+          // V1.7 — refresh écran cible (Score Forme et bilans sont dynamiques)
+          if (target === 'aujourdhui') renderAujourdhui();
+          else if (target === 'bilans') renderBilans();
+          else if (target === 'repas') renderRepas();
         });
       });
     }

@@ -1,7 +1,7 @@
 // Service Worker — Programme Santé Lorenzo
 // Cache les fichiers essentiels pour usage hors ligne
 
-const CACHE_NAME = 'sante-ls-v1-5-remplacer-repas';
+const CACHE_NAME = 'sante-ls-v1-7-tableau-evolution';
 const ASSETS = [
   './',
   './index.html',
