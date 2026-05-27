@@ -848,6 +848,272 @@
     }
     .alert-banner-title { font-size: 12px; font-weight: 500; color: #633806; margin-bottom: 4px; }
     .alert-banner-text { font-size: 12px; color: #633806; }
+    /* ===== V2.0 Calendrier & Bandeau mode journée ===== */
+    .mode-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .mode-banner button {
+      background: transparent;
+      border: 1px solid currentColor;
+      color: inherit;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .mode-banner-text { flex: 1; }
+    .mode-banner-title { font-weight: 600; }
+    .mode-reel { background: #E3F2FD; color: #0D47A1; border-left: 4px solid #1E88E5; }
+    .mode-plan { background: #EEEDFE; color: #3C3489; border-left: 4px solid #534AB7; }
+    .mode-view { background: #F1EFE8; color: #5F5E5A; border-left: 4px solid #B4B2A9; }
+    /* Carte plan EDIT-PLAN */
+    .plan-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border-left: 4px solid #534AB7;
+    }
+    .plan-section { margin-top: 10px; }
+    .plan-section:first-of-type { margin-top: 0; }
+    .plan-label {
+      font-size: 11px;
+      color: #5F5E5A;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .plan-input, .plan-textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 0.5px solid #D3D1C7;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #FAFAF7;
+    }
+    .plan-input:focus, .plan-textarea:focus { outline: 2px solid #534AB7; border-color: transparent; background: #fff; }
+    .plan-textarea { resize: vertical; min-height: 42px; line-height: 1.4; }
+    .plan-repas-row {
+      padding: 9px 0;
+      border-bottom: 0.5px solid #F1EFE8;
+    }
+    .plan-repas-row:last-child { border-bottom: none; }
+    .plan-repas-name {
+      font-size: 11.5px;
+      color: #D85A30;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 5px;
+    }
+    .plan-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 90px;
+      gap: 6px;
+    }
+    .btn-effacer-plan {
+      background: transparent;
+      border: 1px solid #B4B2A9;
+      color: #5F5E5A;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      width: 100%;
+      margin-top: 10px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    /* Calendrier — toggle vues année/mois/semaine */
+    .cal-view-toggle {
+      display: flex;
+      gap: 4px;
+      background: #F1EFE8;
+      padding: 3px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+    }
+    .cal-view-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 8px 4px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-family: inherit;
+      color: #5F5E5A;
+      cursor: pointer;
+    }
+    .cal-view-btn.active {
+      background: #fff;
+      color: #1a1a1a;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    /* Navigation période (mois/semaine) */
+    .cal-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .cal-nav-title { font-size: 16px; font-weight: 500; text-transform: capitalize; }
+    .cal-nav-btn {
+      background: #fff;
+      border: 0.5px solid #D3D1C7;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: inherit;
+      color: #1a1a1a;
+    }
+    /* Vue année — 12 petites grilles */
+    .cal-year-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .cal-month-mini {
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 6px 6px;
+      cursor: pointer;
+    }
+    .cal-month-mini.is-current { box-shadow: 0 0 0 2px #1E88E5 inset; }
+    .cal-month-mini-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 4px;
+      text-transform: capitalize;
+      color: #1a1a1a;
+    }
+    .cal-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+    }
+    .cal-mini-cell {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #5F5E5A;
+      position: relative;
+    }
+    .cal-mini-cell.empty { color: transparent; }
+    .cal-mini-cell .mini-dot {
+      position: absolute;
+      bottom: 1px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+    .cal-mini-cell.is-today { background: #E3F2FD; border-radius: 3px; font-weight: 600; color: #0D47A1; }
+    /* Vue mois — pleine taille */
+    .cal-month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+    .cal-month-header {
+      font-size: 10px;
+      text-align: center;
+      color: #888780;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      padding: 4px 0;
+    }
+    .cal-month-cell {
+      aspect-ratio: 1 / 1.1;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 4px 2px;
+      cursor: pointer;
+      font-size: 13px;
+      position: relative;
+      color: #1a1a1a;
+    }
+    .cal-month-cell.empty { background: transparent; cursor: default; }
+    .cal-month-cell.is-today {
+      background: #E3F2FD;
+      box-shadow: 0 0 0 2px #1E88E5 inset;
+      font-weight: 600;
+      color: #0D47A1;
+    }
+    .cal-month-cell .day-num { font-size: 13px; line-height: 1; margin-top: 3px; }
+    .cal-month-cell .day-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-top: auto;
+      margin-bottom: 4px;
+    }
+    .cal-month-cell .day-type {
+      font-size: 8.5px;
+      color: #888780;
+      margin-top: 2px;
+      text-align: center;
+      line-height: 1.1;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    /* Vue semaine — liste verticale détaillée */
+    .cal-week-list { display: flex; flex-direction: column; gap: 6px; }
+    .cal-week-row {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      border-left: 4px solid #D3D1C7;
+    }
+    .cal-week-row.is-today { border-left-color: #1E88E5; background: #F8FBFE; }
+    .cal-week-row .week-date {
+      min-width: 38px;
+      text-align: center;
+    }
+    .cal-week-row .week-date-num { font-size: 17px; font-weight: 600; }
+    .cal-week-row .week-date-day { font-size: 10px; color: #5F5E5A; text-transform: uppercase; }
+    .cal-week-row.is-today .week-date-num,
+    .cal-week-row.is-today .week-date-day { color: #0D47A1; }
+    .cal-week-row .week-info { flex: 1; }
+    .cal-week-row .week-type { font-size: 13px; font-weight: 500; }
+    .cal-week-row .week-sub { font-size: 11px; color: #5F5E5A; margin-top: 2px; }
+    .cal-week-row .week-dot { width: 10px; height: 10px; border-radius: 50%; }
+    /* Légende calendrier */
+    .cal-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      font-size: 10.5px;
+      color: #5F5E5A;
+      margin-top: 12px;
+      padding: 8px;
+    }
+    .cal-legend-item { display: flex; align-items: center; gap: 4px; }
+    .cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
   </style>
 </head>
 <body>
@@ -861,11 +1127,20 @@
     <div class="avatar">LS</div>
   </header>
 
-  <!-- ÉCRAN AUJOURD'HUI -->
-  <section class="screen active" id="screen-aujourdhui">
+  <!-- ÉCRAN JOURNÉE (ex-Aujourd'hui — V2.0 affiche n'importe quel jour cliqué dans le calendrier) -->
+  <section class="screen" id="screen-aujourdhui">
 
-    <!-- Zone d'alertes auto (s'affiche selon règles) -->
+    <!-- V2.0 — Bandeau mode (REEL / PLAN / VIEW) -->
+    <div id="mode-banner-zone"></div>
+
+    <!-- V2.0 — Conteneur EDIT-PLAN (affiché uniquement en mode plan) -->
+    <div id="plan-zone" style="display:none;"></div>
+
+    <!-- Zone d'alertes auto (s'affiche selon règles) — uniquement EDIT-REEL -->
     <div id="alerts-zone"></div>
+
+    <!-- Bloc REEL (affiché uniquement en mode EDIT-REEL / VIEW jour passé) -->
+    <div id="reel-zone">
 
     <!-- Ressenti rapide -->
     <div class="card">
@@ -960,23 +1235,40 @@
       <strong>💡 Tip du jour</strong>
       <span id="tip-text">—</span>
     </div>
+
+    </div><!-- /#reel-zone -->
   </section>
 
-  <!-- ÉCRAN PROGRAMME -->
-  <section class="screen" id="screen-programme">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin: 14px 0;">
-      <div>
-        <p style="font-size: 11px; color: #5F5E5A;">SEMAINE</p>
-        <p style="font-size: 18px; font-weight: 500;" id="semaine-titre">Semaine 1</p>
-      </div>
-      <div style="display: flex; gap: 6px;">
-        <button class="btn btn-outline" style="width:34px; padding:8px;" id="semaine-prev">‹</button>
-        <button class="btn btn-outline" style="width:34px; padding:8px;" id="semaine-next">›</button>
-      </div>
-    </div>
-    <div id="jours-list"><!-- généré dynamiquement --></div>
+  <!-- ÉCRAN PROGRAMME — V2.0 Calendrier annuel/mensuel/hebdo -->
+  <section class="screen active" id="screen-programme">
+    <h2 style="font-size: 18px; font-weight: 500; margin: 14px 0 10px;">Calendrier 2026</h2>
 
-    <!-- Détail programme salle (caché par défaut, ouvert sur clic) -->
+    <!-- Toggle vue année / mois / semaine -->
+    <div class="cal-view-toggle" id="cal-view-toggle">
+      <button class="cal-view-btn" data-view="annee">Année</button>
+      <button class="cal-view-btn active" data-view="mois">Mois</button>
+      <button class="cal-view-btn" data-view="semaine">Semaine</button>
+    </div>
+
+    <!-- Nav période (mois/semaine seulement) -->
+    <div class="cal-nav" id="cal-nav" style="display:none;">
+      <button class="cal-nav-btn" id="cal-nav-prev">‹</button>
+      <p class="cal-nav-title" id="cal-nav-title">—</p>
+      <button class="cal-nav-btn" id="cal-nav-next">›</button>
+    </div>
+
+    <!-- Conteneur dynamique (rendu selon vue) -->
+    <div id="cal-view-zone"></div>
+
+    <!-- Légende -->
+    <div class="cal-legend">
+      <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#1E88E5;"></span>Aujourd'hui</span>
+      <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#1D9E75;"></span>Réel saisi</span>
+      <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#534AB7;"></span>Plan saisi</span>
+      <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#D3D1C7;"></span>Vide</span>
+    </div>
+
+    <!-- Détail programme salle (caché par défaut, ouvert sur clic depuis l'écran journée) -->
     <div id="salle-detail" style="display:none; margin-top: 16px;"></div>
   </section>
 
@@ -1123,7 +1415,7 @@
       </div>
     </div>
 
-    <p style="text-align:center; font-size: 11px; color:#888780; margin-top: 20px;">Version 1.0 — Données 100% locales sur cet appareil</p>
+    <p style="text-align:center; font-size: 11px; color:#888780; margin-top: 20px;">Version 2.0 — Calendrier annuel + 3 modes (réel / plan / lecture)<br>Données 100% locales sur cet appareil</p>
   </section>
 
   <!-- ===== MODALES ===== -->
@@ -1215,15 +1507,15 @@
     </div>
   </div>
 
-  <!-- Navigation bottom -->
+  <!-- Navigation bottom (V2.0 — Programme = écran d'accueil, Aujourd'hui = raccourci) -->
   <nav class="nav-bar">
-    <button class="nav-btn active" data-screen="aujourdhui">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Aujourd'hui</span>
-    </button>
-    <button class="nav-btn" data-screen="programme">
+    <button class="nav-btn active" data-screen="programme">
       <span class="nav-icon">📅</span>
       <span class="nav-label">Programme</span>
+    </button>
+    <button class="nav-btn" data-screen="aujourdhui" id="nav-aujourdhui">
+      <span class="nav-icon">📌</span>
+      <span class="nav-label">Aujourd'hui</span>
     </button>
     <button class="nav-btn" data-screen="repas">
       <span class="nav-icon">🍽</span>
@@ -1261,9 +1553,11 @@
 
       // Charger l'état utilisateur depuis localStorage
       STATE = loadState();
+      // V2.0 — date courante affichée dans l'écran journée (in-memory, non persistée)
+      STATE.currentDate = todayISO();
 
-      // Initialiser l'écran Aujourd'hui
-      renderAujourdhui();
+      // Initialiser l'écran Aujourd'hui (= screen-journee, sur date courante)
+      renderJourneeDetail(STATE.currentDate);
       renderProgramme();
       renderRepas();
       renderBilans();
@@ -1297,6 +1591,8 @@
           const parsed = JSON.parse(raw);
           // V1.5 — rétro-compatibilité : s'assurer que repasRemplaces existe
           if (!parsed.repasRemplaces) parsed.repasRemplaces = {};
+          // V2.0 — rétro-compatibilité : s'assurer que plan existe
+          if (!parsed.plan) parsed.plan = {};
           return parsed;
         }
         catch (e) { console.error('Erreur parse state', e); }
@@ -1307,11 +1603,14 @@
         seances: {},        // { "2026-05-17": "fait" | "partiel" | "rate" }
         repas: {},          // { "2026-05-17_dejeuner": true }
         repasRemplaces: {}, // V1.5 — { "2026-05-17_dejeuner": { plat:"...", date_remplacement:"..." } }
+        plan: {},           // V2.0 — { "2026-06-15": { seance:{type,horaire,notes}, repas:{dejeuner:{idee,motsCles},...}, note } }
         notifications: { seance: true, poids: true, soir: true, hebdo: true }
       };
     }
     function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+      // STATE.currentDate est volontairement non persisté (in-memory uniquement)
+      const { currentDate, ...persistable } = STATE;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable));
     }
 
     // ============== REMPLACEMENTS DE REPAS (V1.5) ==============
@@ -1378,6 +1677,133 @@
       return `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]}`;
     }
 
+    // ============== HELPERS V2.0 — Calendrier & Modes journée ==============
+    // Mode d'édition pour une date donnée :
+    //  - 'EDIT-REEL' : date ≤ aujourd'hui → saisie de ce qui s'est réellement passé
+    //  - 'EDIT-PLAN' : aujourd'hui < date ≤ fin du mois courant + 1 → préprogrammation (idées, mots-clés)
+    //  - 'VIEW'      : date > fenêtre plan → consultation seule (rien à saisir encore)
+    function getModeJournee(date) {
+      const t = todayISO();
+      if (date <= t) return 'EDIT-REEL';
+      if (date <= getFinFenetrePlan()) return 'EDIT-PLAN';
+      return 'VIEW';
+    }
+    // Fin de la fenêtre de planification = dernier jour du mois suivant le mois courant.
+    function getFinFenetrePlan() {
+      const now = new Date();
+      // Dernier jour du (mois courant + 1) = jour 0 du (mois courant + 2)
+      const fin = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+      return isoFromDate(fin);
+    }
+    // Récupère l'entrée de plan pour une date, ou un squelette vide.
+    function getPlan(date) {
+      if (!STATE.plan) STATE.plan = {};
+      return STATE.plan[date] || {
+        seance: { type: '', horaire: '', notes: '' },
+        repas: {
+          dejeuner: { idee: '', motsCles: '' },
+          collation_matin: { idee: '', motsCles: '' },
+          diner: { idee: '', motsCles: '' },
+          collation_apres_midi: { idee: '', motsCles: '' },
+          collation_post_seance: { idee: '', motsCles: '' },
+          souper: { idee: '', motsCles: '' }
+        },
+        note: ''
+      };
+    }
+    function ensurePlanShape(p) {
+      if (!p) p = {};
+      if (!p.seance) p.seance = { type: '', horaire: '', notes: '' };
+      if (!p.repas) p.repas = {};
+      ['dejeuner','collation_matin','diner','collation_apres_midi','collation_post_seance','souper'].forEach(k => {
+        if (!p.repas[k]) p.repas[k] = { idee: '', motsCles: '' };
+      });
+      if (p.note == null) p.note = '';
+      return p;
+    }
+    function setPlanField(date, path, value) {
+      if (!STATE.plan) STATE.plan = {};
+      const p = ensurePlanShape(STATE.plan[date] || {});
+      // path ex : "seance.type" ou "repas.dejeuner.idee" ou "note"
+      const parts = path.split('.');
+      let cur = p;
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!cur[parts[i]]) cur[parts[i]] = {};
+        cur = cur[parts[i]];
+      }
+      cur[parts[parts.length - 1]] = value;
+      STATE.plan[date] = p;
+      // Si tout le plan est vide → on retire l'entrée pour ne pas polluer
+      if (isPlanEmpty(p)) delete STATE.plan[date];
+      saveState();
+    }
+    function isPlanEmpty(p) {
+      if (!p) return true;
+      const s = p.seance || {};
+      const r = p.repas || {};
+      if ((s.type || '').trim() || (s.horaire || '').trim() || (s.notes || '').trim()) return false;
+      if ((p.note || '').trim()) return false;
+      const moments = ['dejeuner','collation_matin','diner','collation_apres_midi','collation_post_seance','souper'];
+      for (const m of moments) {
+        const x = r[m] || {};
+        if ((x.idee || '').trim() || (x.motsCles || '').trim()) return false;
+      }
+      return true;
+    }
+    function clearPlan(date) {
+      if (STATE.plan && STATE.plan[date]) {
+        delete STATE.plan[date];
+        saveState();
+      }
+    }
+    // Détermine si une date a du contenu "réel" saisi (poids/ressenti/séance/repas coché/repas remplacé)
+    function hasRealData(date) {
+      if (STATE.poids && STATE.poids[date] != null) return true;
+      if (STATE.ressenti && STATE.ressenti[date]) return true;
+      if (STATE.seances && STATE.seances[date]) return true;
+      if (STATE.repas) {
+        for (const k of Object.keys(STATE.repas)) {
+          if (k.startsWith(date + '_') && STATE.repas[k]) return true;
+        }
+      }
+      if (STATE.repasRemplaces) {
+        for (const k of Object.keys(STATE.repasRemplaces)) {
+          if (k.startsWith(date + '_')) return true;
+        }
+      }
+      return false;
+    }
+    function hasPlanData(date) {
+      return !!(STATE.plan && STATE.plan[date] && !isPlanEmpty(STATE.plan[date]));
+    }
+    // Couleur de l'indicateur calendrier pour une date
+    //  bleu  = aujourd'hui · vert = réel saisi · violet = plan saisi · gris = vide
+    function getDayDotColor(date) {
+      const t = todayISO();
+      if (date === t) return '#1E88E5';                 // bleu — aujourd'hui
+      if (date < t && hasRealData(date)) return '#1D9E75'; // vert — réel saisi
+      if (date > t && hasPlanData(date)) return '#534AB7'; // violet — plan saisi
+      return '#D3D1C7';                                  // gris — vide
+    }
+    // Récupère le jour DATA (programme) s'il existe pour cette date, sinon retourne un objet minimal
+    function getJourEffectif(date) {
+      const d = new Date(date + 'T00:00:00');
+      const joursFR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+      const fromData = getJourByDate(date);
+      if (fromData) return fromData;
+      // Jour hors programme migré → squelette synthétique compatible avec le rendu
+      return {
+        date,
+        jour_semaine: joursFR[d.getDay()],
+        type: 'Jour libre',
+        horaire_seance: '',
+        activite: '',
+        rituel: '',
+        repas: {},
+        _synthetique: true
+      };
+    }
+
     // ============== HEADER ==============
     function updateHeader() {
       const today = todayISO();
@@ -1385,10 +1811,40 @@
       document.getElementById('header-greeting').textContent = `Salut ${DATA.profil.prenom || 'Lorenzo'}`;
     }
 
-    // ============== ÉCRAN AUJOURD'HUI ==============
+    // ============== ÉCRAN JOURNÉE (V2.0 — date paramétrée) ==============
+    // Alias rétro-compat
     function renderAujourdhui() {
-      const jour = jourCourant();
-      if (!jour) return;
+      renderJourneeDetail(STATE && STATE.currentDate ? STATE.currentDate : todayISO());
+    }
+
+    function renderJourneeDetail(date) {
+      // Sécurité : si pas de date, on bascule sur aujourd'hui
+      if (!date) date = todayISO();
+      STATE.currentDate = date;
+
+      const jour = getJourEffectif(date);
+      const mode = getModeJournee(date);
+
+      // Bandeau de mode + bouton retour calendrier
+      renderModeBanner(date, mode, jour);
+
+      // Adaptation : on masque/affiche les zones selon le mode
+      const reelZone = document.getElementById('reel-zone');
+      const planZone = document.getElementById('plan-zone');
+      const alertsZone = document.getElementById('alerts-zone');
+
+      if (mode === 'EDIT-PLAN') {
+        reelZone.style.display = 'none';
+        alertsZone.style.display = 'none';
+        planZone.style.display = 'block';
+        renderPlanEditor(date, jour);
+        return;
+      }
+
+      // Modes EDIT-REEL et VIEW : on affiche la zone réelle
+      reelZone.style.display = 'block';
+      alertsZone.style.display = (mode === 'EDIT-REEL') ? 'block' : 'none';
+      planZone.style.display = 'none';
 
       // Activité du jour
       document.getElementById('activite-title').textContent = jour.type || '—';
@@ -1396,7 +1852,7 @@
       document.getElementById('activite-sub').textContent = sub;
 
       // Statut de la séance
-      const statut = STATE.seances[jour.date];
+      const statut = STATE.seances[date];
       document.querySelectorAll('#activite-buttons .btn').forEach(b => {
         b.classList.toggle('selected', b.dataset.statut === statut);
       });
@@ -1405,7 +1861,7 @@
       renderRepasList(jour);
 
       // Poids
-      const poidsAuj = STATE.poids[jour.date];
+      const poidsAuj = STATE.poids[date];
       const poidsDepart = DATA.profil.poids_depart_kg || 105;
       const poidsObj = DATA.profil.poids_objectif_kg || 92;
       document.getElementById('poids-actuel').textContent = poidsAuj ? poidsAuj.toFixed(1).replace('.', ',') : '—';
@@ -1417,10 +1873,20 @@
         const aPerdre = poidsDepart - poidsObj;
         const pct = Math.max(0, Math.min(100, Math.round((perdu / aPerdre) * 100)));
         document.getElementById('poids-progress').style.width = pct + '%';
+      } else {
+        document.getElementById('poids-delta').textContent = '—';
+        document.getElementById('poids-progress').style.width = '0%';
       }
+      // Pré-remplir l'input poids selon la date affichée
+      const inputPoids = document.getElementById('poids-input');
+      if (inputPoids) inputPoids.value = poidsAuj != null ? poidsAuj : '';
 
-      // Ressenti déjà saisi ?
-      const r = STATE.ressenti[jour.date];
+      // Reset visuel ressenti puis re-application si saisi
+      document.getElementById('energie-slider').value = 7;
+      document.getElementById('energie-value').textContent = 7;
+      document.querySelectorAll('#humeur-row .emoji-btn').forEach(b => b.classList.remove('selected'));
+      document.querySelectorAll('#genou-row .pill-btn').forEach(b => b.classList.remove('selected-ok', 'selected-warning', 'selected-danger'));
+      const r = STATE.ressenti[date];
       if (r) {
         if (r.energie != null) {
           document.getElementById('energie-slider').value = r.energie;
@@ -1433,7 +1899,6 @@
         }
         if (r.genou) {
           document.querySelectorAll('#genou-row .pill-btn').forEach(b => {
-            b.classList.remove('selected-ok', 'selected-warning', 'selected-danger');
             if (b.dataset.genou === r.genou) {
               const cls = r.genou === 'ok' ? 'selected-ok' : r.genou === 'sensible' ? 'selected-warning' : 'selected-danger';
               b.classList.add(cls);
@@ -1445,8 +1910,8 @@
       // Score Forme du jour (V1.7 B1)
       renderScoreFormeMini(jour);
 
-      // Aperçu 3 prochains jours
-      renderPreview3Days();
+      // Aperçu 3 prochains jours (à partir de la date affichée)
+      renderPreview3Days(date);
 
       // Tip du jour
       const tips = [
@@ -1456,10 +1921,124 @@
         'Coucher avant 23h30 — le sommeil est le levier numéro 1 de la perte de poids.',
         'Règle Berthou : paume = protéine, poing = féculent, main = légumes à volonté.'
       ];
-      const tipIdx = new Date().getDate() % tips.length;
+      const tipIdx = new Date(date + 'T00:00:00').getDate() % tips.length;
       document.getElementById('tip-text').textContent = tips[tipIdx];
       document.getElementById('tip-box').style.display = 'block';
     }
+
+    // V2.0 — Bandeau qui indique le mode actif et propose un retour calendrier
+    function renderModeBanner(date, mode, jour) {
+      const zone = document.getElementById('mode-banner-zone');
+      if (!zone) return;
+      const isToday = (date === todayISO());
+      let cls, title, sub;
+      if (mode === 'EDIT-REEL') {
+        cls = 'mode-reel';
+        title = isToday ? '📌 Aujourd\'hui' : `📌 ${formatDateFR(date)}`;
+        sub = isToday ? 'Saisie en cours · données réelles' : 'Saisie rétroactive · données réelles';
+      } else if (mode === 'EDIT-PLAN') {
+        cls = 'mode-plan';
+        title = `🗓️ Plan — ${formatDateFR(date)}`;
+        sub = 'Pré-programmation (idées, mots-clés). La saisie réelle s\'ouvrira le jour J.';
+      } else {
+        cls = 'mode-view';
+        title = `👁️ ${formatDateFR(date)}`;
+        sub = 'Lecture seule · hors fenêtre de planification';
+      }
+      zone.innerHTML = `
+        <div class="mode-banner ${cls}">
+          <div class="mode-banner-text">
+            <p class="mode-banner-title">${title}</p>
+            <p>${sub}</p>
+          </div>
+          <button id="btn-retour-cal">📅 Calendrier</button>
+        </div>
+      `;
+      const btn = document.getElementById('btn-retour-cal');
+      if (btn) btn.addEventListener('click', () => switchScreen('programme'));
+    }
+
+    // V2.0 — Éditeur de plan pour une date future (dans la fenêtre fin mois courant + 1)
+    function renderPlanEditor(date, jour) {
+      const zone = document.getElementById('plan-zone');
+      const plan = ensurePlanShape(STATE.plan && STATE.plan[date] ? { ...STATE.plan[date] } : null);
+      const moments = [
+        { key: 'dejeuner', label: '🌅 Déjeuner (matin)' },
+        { key: 'collation_matin', label: '🍎 Collation matin' },
+        { key: 'diner', label: '☀️ Dîner (midi)' },
+        { key: 'collation_apres_midi', label: '🍎 Collation après-midi' },
+        { key: 'collation_post_seance', label: '💪 Collation post-séance' },
+        { key: 'souper', label: '🌙 Souper (soir)' }
+      ];
+      // Suggestion type séance si jour programmé existe
+      const typeSuggere = (!jour._synthetique && jour.type) ? jour.type : '';
+      const horaireSuggere = (!jour._synthetique && jour.horaire_seance) ? jour.horaire_seance : '';
+      const repasHTML = moments.map(m => {
+        const rp = plan.repas[m.key] || { idee: '', motsCles: '' };
+        return `
+          <div class="plan-repas-row">
+            <p class="plan-repas-name">${m.label}</p>
+            <input class="plan-input" placeholder="Idée (ex: poulet curry + brocolis)"
+              data-plan-path="repas.${m.key}.idee" value="${escapeAttr(rp.idee)}">
+            <input class="plan-input" placeholder="Mots-clés (paume protéine, légumes, poing complet…)"
+              style="margin-top:5px;"
+              data-plan-path="repas.${m.key}.motsCles" value="${escapeAttr(rp.motsCles)}">
+          </div>
+        `;
+      }).join('');
+      zone.innerHTML = `
+        <div class="plan-card">
+          <p class="card-label" style="margin-bottom:10px;">🗓️ Plan séance</p>
+          <div class="plan-grid-2">
+            <div>
+              <span class="plan-label">Type</span>
+              <input class="plan-input" placeholder="${typeSuggere || 'Cardio salle, Marche, Repos…'}"
+                data-plan-path="seance.type" value="${escapeAttr(plan.seance.type)}">
+            </div>
+            <div>
+              <span class="plan-label">Horaire</span>
+              <input class="plan-input" placeholder="${horaireSuggere || '7h'}"
+                data-plan-path="seance.horaire" value="${escapeAttr(plan.seance.horaire)}">
+            </div>
+          </div>
+          <div class="plan-section">
+            <span class="plan-label">Notes séance</span>
+            <textarea class="plan-textarea" placeholder="Idées exercices, charge cible, durée…"
+              data-plan-path="seance.notes">${escapeText(plan.seance.notes)}</textarea>
+          </div>
+        </div>
+
+        <div class="plan-card">
+          <p class="card-label" style="margin-bottom:10px;">🍽 Plan repas (idées + mots-clés Berthou)</p>
+          ${repasHTML}
+        </div>
+
+        <div class="plan-card">
+          <p class="card-label" style="margin-bottom:6px;">📝 Note libre du jour</p>
+          <textarea class="plan-textarea" placeholder="Contexte, contraintes, objectif particulier…"
+            data-plan-path="note">${escapeText(plan.note)}</textarea>
+          <button class="btn-effacer-plan" id="btn-effacer-plan">🗑 Effacer ce plan</button>
+        </div>
+      `;
+      // Câbler les saisies (debounce léger via blur + input — ici input simple)
+      zone.querySelectorAll('[data-plan-path]').forEach(el => {
+        el.addEventListener('input', () => {
+          setPlanField(date, el.dataset.planPath, el.value);
+        });
+      });
+      // Effacer le plan
+      const btnEff = document.getElementById('btn-effacer-plan');
+      if (btnEff) {
+        btnEff.addEventListener('click', () => {
+          if (confirm('Effacer entièrement le plan pour ' + formatDateFR(date) + ' ?')) {
+            clearPlan(date);
+            renderJourneeDetail(date); // re-render → champs vidés
+          }
+        });
+      }
+    }
+    function escapeAttr(s) { return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function escapeText(s) { return String(s || '').replace(/</g, '&lt;'); }
 
     function renderScoreFormeMini(jour) {
       const card = document.getElementById('score-forme-mini');
@@ -1486,6 +2065,11 @@
       el.innerHTML = '';
       const repas = jour.repas || {};
       const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
+      const hasAny = order.some(k => repas[k]);
+      if (!hasAny) {
+        el.innerHTML = '<p style="font-size:11.5px; color:#888780; padding:6px 0;">Aucun repas planifié pour ce jour (hors programme migré).</p>';
+        return;
+      }
       order.forEach(key => {
         if (!repas[key]) return;
         const r = getRepasEffectif(jour, key); // V1.5
@@ -1518,19 +2102,24 @@
       return map[key] || key;
     }
 
-    function renderPreview3Days() {
+    function renderPreview3Days(refDate) {
       const el = document.getElementById('preview-3days');
+      if (!el) return;
       el.innerHTML = '';
-      const idx = getCurrentJourIndex();
+      if (!refDate) refDate = STATE.currentDate || todayISO();
+      const labels = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
       for (let i = 1; i <= 3; i++) {
-        const j = DATA.semaine.jours[idx + i];
-        if (!j) continue;
-        const labels = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
-        const d = new Date(j.date + 'T00:00:00');
+        const d = new Date(refDate + 'T00:00:00');
+        d.setDate(d.getDate() + i);
+        const iso = isoFromDate(d);
+        const j = getJourEffectif(iso);
         const lab = labels[(d.getDay() + 6) % 7];
         const num = d.getDate();
-        const icon = j.type.includes('Salle') ? '🏋️' : j.type.includes('Actif') ? '🚶' : j.type.includes('Repos') || j.type.includes('Pont') ? '🛌' : j.type.includes('Ascension') ? '🎉' : '📅';
-        const name = j.type.replace(/[💪🚶🌅😴🎉]/g, '').trim();
+        const tp = j.type || '';
+        const icon = tp.includes('Salle') ? '🏋️' : tp.includes('Actif') ? '🚶'
+          : tp.includes('Repos') || tp.includes('Pont') ? '🛌'
+          : tp.includes('Ascension') ? '🎉' : '📅';
+        const name = tp.replace(/[💪🚶🌅😴🎉]/g, '').trim() || 'Jour libre';
         const div = document.createElement('div');
         div.className = 'preview-day';
         div.innerHTML = `
@@ -1538,53 +2127,238 @@
           <span class="preview-day-icon">${icon}</span>
           <p class="preview-day-name">${name.split(' ').slice(0, 2).join(' ')}</p>
         `;
+        // Cliquable → ouvre la journée
+        div.addEventListener('click', () => openJourneeDetail(iso));
         el.appendChild(div);
       }
     }
 
-    // ============== ÉCRAN PROGRAMME ==============
+    // ============== ÉCRAN PROGRAMME — V2.0 Calendrier (Année / Mois / Semaine) ==============
+    let CAL = {
+      view: 'mois',         // 'annee' | 'mois' | 'semaine'
+      year: null,           // année affichée (vue Année)
+      monthRef: null,       // ISO 1er du mois affiché (vue Mois)
+      weekRef: null         // ISO du lundi de la semaine affichée (vue Semaine)
+    };
+
     function renderProgramme() {
-      document.getElementById('semaine-titre').textContent = `Semaine ${DATA.semaine.numero || 1}`;
-      const el = document.getElementById('jours-list');
-      el.innerHTML = '';
+      // Initialise la vue sur la date courante au 1er rendu
       const today = todayISO();
-      DATA.semaine.jours.forEach(j => {
-        const d = new Date(j.date + 'T00:00:00');
-        const labels = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
-        const lab = labels[(d.getDay() + 6) % 7];
-        const num = d.getDate();
-        const statut = STATE.seances[j.date];
-        let accent = '#D3D1C7';
-        let icon = '○';
-        if (j.date === today) { accent = '#D85A30'; icon = '⏰'; }
-        else if (j.date < today) {
-          accent = statut === 'fait' ? '#1D9E75' : statut === 'partiel' ? '#FAC775' : statut === 'rate' ? '#A32D2D' : '#888780';
-          icon = statut === 'fait' ? '✓' : statut === 'partiel' ? '~' : statut === 'rate' ? '✗' : '○';
-        }
-        if (j.type.includes('Repos') || j.type.includes('Pont') || j.type.includes('Ascension')) {
-          if (j.date >= today) { accent = '#FAC775'; icon = '🛌'; }
-        }
-        const card = document.createElement('div');
-        card.className = 'jour-card';
-        card.style.borderLeft = `4px solid ${accent}`;
-        const title = j.type.replace(/[💪🚶🌅😴🎉]/g, '').trim();
-        const sub = j.horaire_seance || j.activite || '';
-        card.innerHTML = `
-          <div class="jour-date">
-            <p class="jour-date-label" style="${j.date === today ? 'color:#D85A30; font-weight:500;' : ''}">${lab}</p>
-            <p class="jour-date-num" style="${j.date === today ? 'color:#D85A30;' : ''}">${num}</p>
-          </div>
-          <div class="jour-info">
-            <p class="jour-info-title">${title}</p>
-            <p class="jour-info-sub">${sub}</p>
-          </div>
-          <span class="jour-status" style="color:${accent};">${icon}</span>
-        `;
-        // Tous les jours sont cliquables (V1.2)
-        card.style.cursor = 'pointer';
-        card.addEventListener('click', () => showJourDetail(j.date));
-        el.appendChild(card);
+      if (CAL.year == null) CAL.year = new Date(today + 'T00:00:00').getFullYear();
+      if (CAL.monthRef == null) {
+        const d = new Date(today + 'T00:00:00');
+        CAL.monthRef = isoFromDate(new Date(d.getFullYear(), d.getMonth(), 1));
+      }
+      if (CAL.weekRef == null) CAL.weekRef = getLundiISO(today);
+      renderCalendrierView();
+    }
+
+    function setCalendrierView(view) {
+      CAL.view = view;
+      document.querySelectorAll('#cal-view-toggle .cal-view-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.view === view);
       });
+      renderCalendrierView();
+    }
+
+    function renderCalendrierView() {
+      const zone = document.getElementById('cal-view-zone');
+      const navEl = document.getElementById('cal-nav');
+      const navTitle = document.getElementById('cal-nav-title');
+      if (!zone || !navEl || !navTitle) return;
+      if (CAL.view === 'annee') {
+        navEl.style.display = 'none';
+        renderViewAnnee(zone);
+      } else if (CAL.view === 'mois') {
+        navEl.style.display = 'flex';
+        const d = new Date(CAL.monthRef + 'T00:00:00');
+        navTitle.textContent = formatMois(d) + ' ' + d.getFullYear();
+        renderViewMois(zone, d);
+      } else {
+        navEl.style.display = 'flex';
+        const d = new Date(CAL.weekRef + 'T00:00:00');
+        const fin = new Date(d); fin.setDate(d.getDate() + 6);
+        navTitle.textContent = `${d.getDate()} ${formatMoisCourt(d)} → ${fin.getDate()} ${formatMoisCourt(fin)}`;
+        renderViewSemaine(zone, d);
+      }
+    }
+
+    function formatMois(d) {
+      const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+      return mois[d.getMonth()];
+    }
+    function formatMoisCourt(d) {
+      const mois = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+      return mois[d.getMonth()];
+    }
+
+    // Retourne l'ISO du lundi de la semaine contenant une date donnée
+    function getLundiISO(iso) {
+      const d = new Date(iso + 'T00:00:00');
+      const day = d.getDay(); // 0=dim
+      const decal = (day === 0) ? -6 : (1 - day);
+      d.setDate(d.getDate() + decal);
+      return isoFromDate(d);
+    }
+
+    // ---- Vue Année : 12 mini-mois sur une grille 2 colonnes ----
+    function renderViewAnnee(zone) {
+      const year = CAL.year;
+      const today = todayISO();
+      let html = '<div class="cal-year-grid">';
+      for (let mIdx = 0; mIdx < 12; mIdx++) {
+        const first = new Date(year, mIdx, 1);
+        const last = new Date(year, mIdx + 1, 0);
+        const nbDays = last.getDate();
+        const startDow = (first.getDay() + 6) % 7; // 0=Lun
+        const isCurrent = (year === new Date(today + 'T00:00:00').getFullYear()
+          && mIdx === new Date(today + 'T00:00:00').getMonth());
+        let cells = '';
+        // Cases vides début
+        for (let i = 0; i < startDow; i++) cells += '<div class="cal-mini-cell empty"></div>';
+        for (let dNum = 1; dNum <= nbDays; dNum++) {
+          const iso = isoFromDate(new Date(year, mIdx, dNum));
+          const color = getDayDotColor(iso);
+          const isToday = (iso === today);
+          const showDot = (color !== '#D3D1C7' && !isToday) ? `<span class="mini-dot" style="background:${color};"></span>` : '';
+          cells += `<div class="cal-mini-cell ${isToday ? 'is-today' : ''}" data-iso="${iso}">${dNum}${showDot}</div>`;
+        }
+        const moisLabel = formatMois(first);
+        html += `
+          <div class="cal-month-mini ${isCurrent ? 'is-current' : ''}" data-month-ref="${isoFromDate(first)}">
+            <p class="cal-month-mini-title">${moisLabel}</p>
+            <div class="cal-mini-grid">${cells}</div>
+          </div>
+        `;
+      }
+      html += '</div>';
+      html += `<div style="display:flex; justify-content:center; gap:10px; margin-top:12px;">
+        <button class="cal-nav-btn" id="cal-year-prev">‹ ${year - 1}</button>
+        <p style="font-size:14px; font-weight:500; align-self:center;">${year}</p>
+        <button class="cal-nav-btn" id="cal-year-next">${year + 1} ›</button>
+      </div>`;
+      zone.innerHTML = html;
+      // Tap sur un mini-mois → ouvre la vue Mois
+      zone.querySelectorAll('.cal-month-mini').forEach(el => {
+        el.addEventListener('click', (e) => {
+          // Si on a cliqué sur une cellule jour précise → ouvre la journée
+          const cell = e.target.closest('.cal-mini-cell');
+          if (cell && cell.dataset.iso) {
+            openJourneeDetail(cell.dataset.iso);
+            return;
+          }
+          CAL.monthRef = el.dataset.monthRef;
+          setCalendrierView('mois');
+        });
+      });
+      const prev = document.getElementById('cal-year-prev');
+      const next = document.getElementById('cal-year-next');
+      if (prev) prev.addEventListener('click', () => { CAL.year = year - 1; renderCalendrierView(); });
+      if (next) next.addEventListener('click', () => { CAL.year = year + 1; renderCalendrierView(); });
+    }
+
+    // ---- Vue Mois : grille 7×N avec point de couleur ----
+    function renderViewMois(zone, first) {
+      const today = todayISO();
+      const nbDays = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+      const startDow = (first.getDay() + 6) % 7;
+      const headers = ['L','M','M','J','V','S','D'];
+      let html = '<div class="cal-month-grid">';
+      headers.forEach(h => html += `<div class="cal-month-header">${h}</div>`);
+      for (let i = 0; i < startDow; i++) html += '<div class="cal-month-cell empty"></div>';
+      for (let dNum = 1; dNum <= nbDays; dNum++) {
+        const iso = isoFromDate(new Date(first.getFullYear(), first.getMonth(), dNum));
+        const isToday = (iso === today);
+        const color = getDayDotColor(iso);
+        const j = getJourEffectif(iso);
+        const typeShort = j._synthetique ? '' : (j.type || '').replace(/[💪🚶🌅😴🎉]/g, '').trim().split(' ').slice(0, 1).join(' ');
+        html += `
+          <div class="cal-month-cell ${isToday ? 'is-today' : ''}" data-iso="${iso}">
+            <span class="day-num">${dNum}</span>
+            ${typeShort ? `<span class="day-type">${typeShort}</span>` : ''}
+            <span class="day-dot" style="background:${color};"></span>
+          </div>
+        `;
+      }
+      html += '</div>';
+      zone.innerHTML = html;
+      zone.querySelectorAll('.cal-month-cell[data-iso]').forEach(el => {
+        el.addEventListener('click', () => openJourneeDetail(el.dataset.iso));
+      });
+    }
+
+    // ---- Vue Semaine : liste verticale détaillée ----
+    function renderViewSemaine(zone, lundi) {
+      const today = todayISO();
+      const joursFR = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+      let html = '<div class="cal-week-list">';
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(lundi); d.setDate(lundi.getDate() + i);
+        const iso = isoFromDate(d);
+        const isToday = (iso === today);
+        const j = getJourEffectif(iso);
+        const color = getDayDotColor(iso);
+        const tp = j.type || 'Jour libre';
+        const title = tp.replace(/[💪🚶🌅😴🎉]/g, '').trim() || 'Jour libre';
+        let sub = j.horaire_seance || j.activite || '';
+        // Si plan saisi, ajouter une note discrète
+        if (hasPlanData(iso)) {
+          const pl = STATE.plan[iso];
+          if (pl && pl.seance && pl.seance.type) sub = `🗓️ Plan : ${pl.seance.type}${pl.seance.horaire ? ' · ' + pl.seance.horaire : ''}`;
+          else sub = '🗓️ Plan saisi';
+        }
+        html += `
+          <div class="cal-week-row ${isToday ? 'is-today' : ''}" data-iso="${iso}" style="border-left-color:${isToday ? '#1E88E5' : color};">
+            <div class="week-date">
+              <p class="week-date-num">${d.getDate()}</p>
+              <p class="week-date-day">${joursFR[i].slice(0,3)}</p>
+            </div>
+            <div class="week-info">
+              <p class="week-type">${title}</p>
+              <p class="week-sub">${sub || '—'}</p>
+            </div>
+            <span class="week-dot" style="background:${color};"></span>
+          </div>
+        `;
+      }
+      html += '</div>';
+      zone.innerHTML = html;
+      zone.querySelectorAll('.cal-week-row[data-iso]').forEach(el => {
+        el.addEventListener('click', () => openJourneeDetail(el.dataset.iso));
+      });
+    }
+
+    // V2.0 — Ouvre la journée : passe sur l'écran journée et rend pour la date sélectionnée
+    function openJourneeDetail(date) {
+      STATE.currentDate = date;
+      switchScreen('aujourdhui');
+      renderJourneeDetail(date);
+      window.scrollTo(0, 0);
+    }
+
+    // Navigation entre mois / semaine
+    function calNavStep(direction) {
+      if (CAL.view === 'mois') {
+        const d = new Date(CAL.monthRef + 'T00:00:00');
+        d.setMonth(d.getMonth() + direction);
+        CAL.monthRef = isoFromDate(new Date(d.getFullYear(), d.getMonth(), 1));
+      } else if (CAL.view === 'semaine') {
+        const d = new Date(CAL.weekRef + 'T00:00:00');
+        d.setDate(d.getDate() + direction * 7);
+        CAL.weekRef = isoFromDate(d);
+      }
+      renderCalendrierView();
+    }
+
+    // Bascule d'écran (centralisée — utilisée par les boutons "retour calendrier" et le raccourci Aujourd'hui)
+    function switchScreen(target) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById('screen-' + target);
+      if (el) el.classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.screen === target);
+      });
+      window.scrollTo(0, 0);
     }
 
     function showJourDetail(date) {
@@ -1709,8 +2483,18 @@
 
     // ============== ÉCRAN REPAS ==============
     function renderRepas() {
-      const jour = jourCourant();
+      // V2.0 — utilise STATE.currentDate (par défaut aujourd'hui)
+      const date = (STATE && STATE.currentDate) ? STATE.currentDate : todayISO();
+      const jour = getJourEffectif(date);
       if (!jour) return;
+      // Si jour sans repas planifiés (hors programme migré), on affiche un message
+      const orderTest = ['dejeuner','collation_matin','diner','collation_apres_midi','collation_post_seance','souper'];
+      const aucun = !orderTest.some(k => jour.repas && jour.repas[k]);
+      if (aucun) {
+        document.getElementById('repas-fiches').innerHTML =
+          `<p style="font-size:12px; color:#5F5E5A; padding:14px; text-align:center;">Aucun repas planifié pour ${formatDateFR(date)}.<br>L'évaluation contextuelle reste disponible via le bouton dédié sur l'écran journée.</p>`;
+        return;
+      }
       const el = document.getElementById('repas-fiches');
       el.innerHTML = '';
       const order = ['dejeuner', 'collation_matin', 'diner', 'collation_apres_midi', 'collation_post_seance', 'souper'];
@@ -1773,7 +2557,7 @@
           if (confirm('Restaurer le repas prévu à l\'origine pour ce moment ?')) {
             restaurerRepas(jour.date, moment);
             renderRepas();
-            renderAujourdhui();
+            renderJourneeDetail(STATE.currentDate || todayISO());
           }
         });
       });
@@ -2282,35 +3066,45 @@
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const target = btn.dataset.screen;
-          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-          document.getElementById('screen-' + target).classList.add('active');
-          document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          window.scrollTo(0, 0);
-          // V1.7 — refresh écran cible (Score Forme et bilans sont dynamiques)
-          if (target === 'aujourdhui') renderAujourdhui();
+          // V2.0 : Aujourd'hui = raccourci qui force la date à today
+          if (target === 'aujourdhui') {
+            STATE.currentDate = todayISO();
+          }
+          switchScreen(target);
+          // Refresh écran cible
+          if (target === 'aujourdhui') renderJourneeDetail(STATE.currentDate);
+          else if (target === 'programme') renderProgramme();
           else if (target === 'bilans') renderBilans();
           else if (target === 'repas') renderRepas();
         });
       });
+      // V2.0 — Toggle vue calendrier
+      document.querySelectorAll('#cal-view-toggle .cal-view-btn').forEach(b => {
+        b.addEventListener('click', () => setCalendrierView(b.dataset.view));
+      });
+      // V2.0 — Navigation période (mois/semaine)
+      const prev = document.getElementById('cal-nav-prev');
+      const next = document.getElementById('cal-nav-next');
+      if (prev) prev.addEventListener('click', () => calNavStep(-1));
+      if (next) next.addEventListener('click', () => calNavStep(1));
     }
 
     function setupRessenti() {
       const slider = document.getElementById('energie-slider');
       slider.addEventListener('input', () => {
         document.getElementById('energie-value').textContent = slider.value;
-        const today = todayISO();
-        STATE.ressenti[today] = STATE.ressenti[today] || {};
-        STATE.ressenti[today].energie = parseInt(slider.value);
+        const date = STATE.currentDate || todayISO();
+        STATE.ressenti[date] = STATE.ressenti[date] || {};
+        STATE.ressenti[date].energie = parseInt(slider.value);
         saveState();
       });
       document.querySelectorAll('#humeur-row .emoji-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('#humeur-row .emoji-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
-          const today = todayISO();
-          STATE.ressenti[today] = STATE.ressenti[today] || {};
-          STATE.ressenti[today].humeur = parseInt(btn.dataset.humeur);
+          const date = STATE.currentDate || todayISO();
+          STATE.ressenti[date] = STATE.ressenti[date] || {};
+          STATE.ressenti[date].humeur = parseInt(btn.dataset.humeur);
           saveState();
         });
       });
@@ -2322,9 +3116,9 @@
           const g = btn.dataset.genou;
           const cls = g === 'ok' ? 'selected-ok' : g === 'sensible' ? 'selected-warning' : 'selected-danger';
           btn.classList.add(cls);
-          const today = todayISO();
-          STATE.ressenti[today] = STATE.ressenti[today] || {};
-          STATE.ressenti[today].genou = g;
+          const date = STATE.currentDate || todayISO();
+          STATE.ressenti[date] = STATE.ressenti[date] || {};
+          STATE.ressenti[date].genou = g;
           saveState();
         });
       });
@@ -2334,14 +3128,14 @@
       document.querySelectorAll('#activite-buttons .btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const statut = btn.dataset.statut;
-          const today = todayISO();
-          const jour = getJourByDate(today) || jourCourant();
-          STATE.seances[jour.date] = statut;
+          const date = STATE.currentDate || todayISO();
+          const jour = getJourEffectif(date);
+          STATE.seances[date] = statut;
           saveState();
           document.querySelectorAll('#activite-buttons .btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
-          // Déclencher modale si "Pas fait"
-          if (statut === 'rate') {
+          // Déclencher modale si "Pas fait" (uniquement si jour réel programmé)
+          if (statut === 'rate' && !jour._synthetique) {
             openSeanceRateeModal(jour);
           } else {
             checkRulesAndShowAlerts();
@@ -2610,12 +3404,14 @@
         const btnRempl = document.getElementById('btn-remplacer-repas');
         if (btnRempl) {
           btnRempl.addEventListener('click', () => {
-            const jour = jourCourant();
+            // V2.0 — on remplace pour la date affichée (STATE.currentDate)
+            const date = STATE.currentDate || todayISO();
+            const jour = getJourEffectif(date);
             if (!jour || !currentEvaluateMoment) return;
-            remplacerRepas(jour.date, currentEvaluateMoment, txt);
+            remplacerRepas(date, currentEvaluateMoment, txt);
             closeModal('modal-choix-perso');
             renderRepas();
-            renderAujourdhui();
+            renderJourneeDetail(date);
           });
         }
         const btnMod = document.getElementById('btn-modifier-choix');
@@ -2941,24 +3737,21 @@
       const input = document.getElementById('poids-input');
       const btn = document.getElementById('poids-save');
       const saved = document.getElementById('poids-saved');
-      // Pré-remplir si poids déjà saisi aujourd'hui
-      const today = todayISO();
-      if (STATE.poids[today]) {
-        input.value = STATE.poids[today];
-      }
+      // V2.0 — pré-remplissage géré par renderJourneeDetail (selon STATE.currentDate)
       btn.addEventListener('click', () => {
         const val = parseFloat(input.value);
         if (isNaN(val) || val < 50 || val > 200) {
           alert('Saisis un poids valide entre 50 et 200 kg');
           return;
         }
-        STATE.poids[today] = Math.round(val * 10) / 10;
+        const date = STATE.currentDate || todayISO();
+        STATE.poids[date] = Math.round(val * 10) / 10;
         saveState();
         // Animation de confirmation
         saved.classList.add('show');
         setTimeout(() => saved.classList.remove('show'), 2000);
         // Re-render les métriques et le graphique
-        renderAujourdhui();
+        renderJourneeDetail(date);
         renderBilans();
         checkRulesAndShowAlerts();
       });
