@@ -1415,7 +1415,7 @@
       </div>
     </div>
 
-    <p style="text-align:center; font-size: 11px; color:#888780; margin-top: 20px;">Version 2.0 — Calendrier annuel + 3 modes (réel / plan / lecture)<br>Données 100% locales sur cet appareil</p>
+    <p style="text-align:center; font-size: 11px; color:#888780; margin-top: 20px;">Version 2.1 — Calendrier + règle déjeuner (pain levain + protéine conditionnelle)<br>Données 100% locales sur cet appareil</p>
   </section>
 
   <!-- ===== MODALES ===== -->
@@ -2610,12 +2610,13 @@
       dejeuner: {
         label: 'Déjeuner (matin)',
         contenu: `
-          🥚 <strong>Protéine</strong> = 1 paume (≈ 2-3 œufs · 60g cottage · 1 tranche jambon)<br>
-          🍞 <strong>Glucide complet</strong> = 1 poing (≈ 1 tranche pain complet · 40g flocons d'avoine)<br>
-          🥑 <strong>Gras</strong> = 1 pouce (huile olive · 5g beurre)<br>
+          🍞 <strong>Base fixe</strong> : 1 tranche <strong>pain au levain</strong> + 1 pouce de beurre<br>
+          🥚 <strong>Protéine selon la journée prévue</strong> :<br>
+          &nbsp;&nbsp;• 🛌 <strong>Repos / midi resto</strong> → 60g cottage + 2-3 tranches dinde <em>(léger)</em><br>
+          &nbsp;&nbsp;• 💪 <strong>Salle / Cardio Zone 2</strong> → 2-3 œufs + gruyère <em>(dense, énergie effort)</em><br>
           🍋 <strong>Rituel matin</strong> : eau + jus citron frais + gingembre râpé
         `,
-        perte_poids: 'Protéine en priorité (satiété longue durée). Pas de viennoiserie ni jus industriel — pic insulinique = stockage. 1 tranche pain max, pas 2.'
+        perte_poids: '1 tranche pain au levain max (pas 2), dinde maigre, pas de viennoiserie ni jus industriel. Pic insulinique = stockage. Le choix cottage+dinde vs œufs+gruyère s\'ajuste à la dépense énergétique de la journée.'
       },
       collation_matin: {
         label: 'Collation matin',
@@ -3488,39 +3489,78 @@
     }
 
     const MOMENT_RULES = {
-      // 🌅 DÉJEUNER (matin) — protéine + glucide complet, pas de légumes obligatoires
+      // 🌅 DÉJEUNER (matin) — Règle V2.1 :
+      //   Base fixe = pain au levain + beurre
+      //   Protéine variable selon journée : cottage+dinde (repos/resto) OU œufs+gruyère (salle/Z2)
       dejeuner: (a) => {
         if (a.aRouge.length) {
           return { classe: 'bad', titre: '🔴 Pas top pour le matin',
             message: `Aliments à éviter au déjeuner : ${a.aRouge.join(', ')}.<br><br>
-              <strong>Un bon déjeuner Berthou c'est :</strong><br>
-              • 🥚 Protéine : œufs (2-3) · cottage cheese · jambon · fromage léger<br>
-              • 🍞 Glucide complet : 1 tranche pain complet · flocons d'avoine<br>
-              • 🍋 Boisson : eau + citron + gingembre · café/thé sans sucre<br>
+              <strong>Ton déjeuner type c'est :</strong><br>
+              • 🍞 Pain au levain + beurre (fixe)<br>
+              • 🥚 Cottage + dinde <em>(repos/resto midi)</em> OU œufs + gruyère <em>(salle/Zone 2)</em><br>
+              • 🍋 Eau + citron + gingembre<br>
               • Pas de viennoiseries, pas de jus industriels`};
         }
+        // V2.1 — détection des combos signature
+        const aPainLevain   = a.t.includes('levain') || a.t.includes('pain au levain');
+        const aBeurre       = a.t.includes('beurre');
+        const aCottage      = a.t.includes('cottage');
+        const aDinde        = a.t.includes('dinde');
+        const aOeufs        = a.t.includes('œuf') || a.t.includes('oeuf') || a.t.includes('omelette');
+        const aGruyere      = a.t.includes('gruyère') || a.t.includes('gruyere');
+        const comboLeger    = aCottage && aDinde;          // repos / midi resto
+        const comboDense    = aOeufs && aGruyere;          // salle / Zone 2
+        const baseLevain    = aPainLevain && aBeurre;
+        // Rituel matin présent ?
+        const rituelTxt = a.t.match(/citron|gingembre/)
+          ? '👍 Le rituel citron+gingembre est en place.'
+          : '💡 Pense au rituel : eau + citron + gingembre au lever.';
+        // V2.1 — Combo dense (œufs + gruyère) avec base levain → idéal jours salle / Z2
+        if (comboDense && baseLevain) {
+          return { classe: 'ok', titre: '🟢 OK — combo dense (salle/Zone 2)',
+            message: `Pain levain + beurre ✓ &nbsp;·&nbsp; œufs + gruyère ✓<br>
+              Combo dense parfait pour un jour <strong>salle ou Cardio Zone 2</strong> (énergie pour l'effort).<br>
+              ${rituelTxt}`};
+        }
+        // V2.1 — Combo léger (cottage + dinde) avec base levain → idéal jours repos / resto midi
+        if (comboLeger && baseLevain) {
+          return { classe: 'ok', titre: '🟢 OK — combo léger (repos/resto)',
+            message: `Pain levain + beurre ✓ &nbsp;·&nbsp; cottage + dinde ✓<br>
+              Combo léger adapté à un jour <strong>repos ou midi resto</strong> (déjeuner dehors compense).<br>
+              ${rituelTxt}`};
+        }
+        // V2.1 — Combos sans la base levain → OK mais rappel pain
+        if (comboDense || comboLeger) {
+          const quel = comboDense ? 'œufs + gruyère' : 'cottage + dinde';
+          const usage = comboDense ? 'salle / Zone 2' : 'repos / resto midi';
+          return { classe: 'warning', titre: '🟠 Combo OK, base à corriger',
+            message: `Protéine ✓ (${quel}, adapté ${usage}).<br>
+              <strong>Ajoute la base fixe</strong> : 1 tranche <strong>pain au levain</strong> + beurre.<br>
+              ${rituelTxt}`};
+        }
+        // Rétro-compat V1.4 — protéine + glucide complet/fruit → OK mais conseil combo signature
         if (a.aProteine || a.aProtLeger) {
           if (a.aFeculentComplet || a.aFruit) {
+            const tipCombo = `<em>💡 Pour caler à ta règle : pain au levain + beurre, puis cottage+dinde (repos/resto) OU œufs+gruyère (salle/Z2).</em>`;
             return { classe: 'ok', titre: '🟢 OK pour le matin',
               message: `Protéine ✓ + glucide complet/fruit ✓<br>
-                Bon déjeuner pour démarrer la journée. ${a.t.match(/citron|gingembre/) ? '👍 Le rituel citron+gingembre est en place.' : '💡 Pense au rituel : eau + citron + gingembre au lever.'}`};
+                Bon déjeuner pour démarrer. ${rituelTxt}<br>${tipCombo}`};
           }
           if (a.aFeculentBlanc) {
             return { classe: 'warning', titre: '🟠 À adapter',
               message: `Protéine ✓ mais le féculent est raffiné.<br><br>
-                Préfère du <strong>pain complet</strong> ou des <strong>flocons d'avoine</strong> plutôt que pain blanc/baguette/tresse.<br>
+                Préfère du <strong>pain au levain</strong> (ta base) plutôt que pain blanc/baguette/tresse.<br>
                 <em>Exception dominicale tresse familiale = OK une fois par semaine si compensée.</em>`};
           }
           return { classe: 'warning', titre: '🟠 À compléter',
-            message: `Protéine ✓ mais il manque un glucide complet pour tenir jusqu'au dîner.<br>
-              Ajoute : 1 tranche pain complet · ou flocons d'avoine · ou 1 fruit.`};
+            message: `Protéine ✓ mais il manque la base : <strong>1 tranche pain au levain + beurre</strong>.`};
         }
         return { classe: 'bad', titre: '🔴 Pas adapté',
           message: `Il manque la protéine — pilier d'un bon déjeuner pour éviter les fringales d'ici midi.<br><br>
-            <strong>Idées rapides :</strong><br>
-            • 2-3 œufs brouillés + 1 tranche pain complet<br>
-            • Cottage cheese + pain complet + miel<br>
-            • Gruyère + dinde + pain complet`};
+            <strong>Ta règle déjeuner :</strong><br>
+            • 🍞 Pain au levain + beurre (fixe)<br>
+            • 🥚 Cottage + dinde <em>(repos/resto)</em> OU œufs + gruyère <em>(salle/Z2)</em>`};
       },
 
       // 🍎 COLLATION MATIN — fruit + petite protéine légère
